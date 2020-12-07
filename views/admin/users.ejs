@@ -1,0 +1,56 @@
+<%- include("a-partials/a-header") -%>
+
+
+<div class="row">
+  <div class="col-lg-2  col-md-3 sidebar">
+    <h2>Election Management System</h2>
+    <div>
+      <a href="/admin">
+        <h5>Dashboard</h5>
+      </a>
+      <a href="/admin/election">
+        <h5>Election</h5>
+      </a>
+      <a href="/admin/users">
+        <h5 class="active">Users</h5>
+      </a>
+      <a href="">
+        <h5>Party</h5>
+      </a>
+      <a href="">
+        <h5>Result</h5>
+      </a>
+      <a href="/login">
+        <h5>Logout</h5>
+      </a>
+    </div>
+
+  </div>
+  <div class="col-lg-10 col-md-9 bar content">
+    <div class="box">
+      <a href="/admin/add-user" style="color: blue;">Add User</a>
+      <table>
+        <tr>
+          <th>user id----------</th>
+          <th>first name-----</th>
+          <th>last name-----</th>
+          <th>gender---------</th>
+          <th>link</th>
+        </tr>
+        <% users.forEach( function(user) { %>
+          <tr>
+            <td><%- user.id %></td>
+            <td><%- user.fname %> </td>
+            <td><%- user.lname %> </td>
+            <td><%- user.sex %> </td>
+            <td><a href="/admin/users/<%- user.id %> " style="color:blueviolet">view user</a></td>
+          </tr>
+        <%  })  %>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+<%- include("a-partials/a-footer") -%>
