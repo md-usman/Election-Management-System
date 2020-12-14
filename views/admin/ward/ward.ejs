@@ -1,0 +1,82 @@
+<%- include("../a-partials/a-header") -%>
+
+<div class="row">
+    <div class="col-lg-2  col-md-3 sidebar">
+      <h2>Election Management System</h2>
+      <div>
+        <a href="/admin">
+          <h5>Dashboard</h5>
+        </a>
+        
+        <a href="/admin/users">
+          <h5>Users</h5>
+        </a>
+        <a href="/admin/party">
+          <h5>Party</h5>
+        </a>
+        <a href="/admin/wards">
+          <h5 class="active">Wards</h5>
+        </a>
+        <a href="">
+          <h5>Result</h5>
+        </a>
+        <a href="/login">
+          <h5>Logout</h5>
+        </a>
+      </div>
+  
+    </div>
+    <div class="col-lg-10 col-md-9 bar content">
+        <% if(message !== "") { %>
+          <h4 style="color: black;"><%- message.value %></h4>
+        <% } %> 
+      
+      
+      <h3>Add ward</h3>
+      <form action="/admin/wards/add-del" method="POST">
+        <label for="">Ward id: </label>
+        <input type="number" name="w_id" value="100" id="">
+        <label>Ward name: </label>
+        <input type="text" name="wname">
+        <input type="hidden" name="meth" value="add">
+        <input type="submit" class="btn btn-success" value="Add ward">
+      </form>
+      <table class="table" style="text-align: center;">
+        <thead>
+          <tr class="table-primary">
+            <th scope="col">Ward id</th>
+            <th scope="col">Ward Name</th>
+            <th scope="col">Parties</th>
+            <th scope="col">Voters</th>
+            <th scope="col">Winning Party</th>
+            <th scope="col">Delete Ward</th>            
+          </tr>
+        </thead>
+        <tbody>
+          <% wards.forEach(function (ward) { %> 
+          <tr>
+            <th scope="row"><%- ward.ward_id %> </th>
+            <td><%- ward.ward_name %></td>
+            <td>12</td>
+            <td>150</td>
+            <td>Pending</td>
+            <td><form action="/admin/wards/add-del" method="POST">
+              <input type="hidden" name="meth" value="delete">
+              <input type="hidden" name="ward_id" value="<%- ward.ward_id %>">
+              <input type="submit" class="btn btn-outline-danger" value="Delete Ward">      
+            </form></td>
+          </tr>
+        <% }) %> 
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+  
+
+<%- include("../a-partials/a-footer") -%>
+
+
+
+
+<!-- // at last add this:: style="vertical-align:middle;" -->
