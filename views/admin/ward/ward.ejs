@@ -35,7 +35,7 @@
       <h3>Add ward</h3>
       <form action="/admin/wards/add-del" method="POST">
         <label for="">Ward id: </label>
-        <input type="number" name="w_id" value="100" id="">
+        <input type="number" name="w_id" value="10" id="">
         <label>Ward name: </label>
         <input type="text" name="wname">
         <input type="hidden" name="meth" value="add">
@@ -53,7 +53,9 @@
           </tr>
         </thead>
         <tbody>
-          <% wards.forEach(function (ward) { %> 
+          
+            <% wards.forEach(function (ward) { %>
+               
           <tr>
             <th scope="row"><%- ward.ward_id %> </th>
             <td><%- ward.ward_name %></td>
@@ -66,7 +68,10 @@
               <input type="submit" class="btn btn-outline-danger" value="Delete Ward">      
             </form></td>
           </tr>
-        <% }) %> 
+          
+          <% }) %> 
+           
+          
         </tbody>
       </table>
 

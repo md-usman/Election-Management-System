@@ -11,7 +11,8 @@ const con = mysql.createConnection( {
     host: process.env.HOST,
     user: process.env.USR,
     password: process.env.PASSWORD,
-    database: process.env.DATABASE
+    database: process.env.DATABASE,
+    multipleStatements: true
 });
 
 con.connect(function(err) {
@@ -59,23 +60,17 @@ app.get("/admin/users", function(req, res) {
 
 app.get("/admin/users/:id", function(req, res) {
     const id = req.params.id;
-    con.query(`SELECT * FROM users WHERE id=${id}`, function(err, result) {
+    var message = ""
+    if(req.query.value) {
+        message = {"value" : req.query.value};
+        JSON.stringify(message);
+    }
+    con.query(`SELECT * FROM VOTER WHERE voter_id=${id}`, function(err, result) {
         if(!err) {
             res.render("admin/users/user", {
-                voters: result
+                voter: result[0],
+                message: message
             });
-        } else {
-            console.log(err);
-        }
-    });
-});
-
-app.post("/admin/users/delete", function(req, res) {
-    const id = req.body.user_id;
-    con.query(`DELETE FROM users WHERE id=${id}`, function(err) {
-        if(!err) {
-            console.log(`successfully deleted user_id: ${id}`);
-            res.redirect("/admin/users");
         } else {
             console.log(err);
         }
@@ -88,7 +83,8 @@ app.get("/admin/add-user", function(req, res) {
             console.log(err);
         } else {
             res.render("admin/users/add-user", {
-                wards: result
+                wards: result,
+                voter: ""
             });
         }
     })
@@ -112,13 +108,75 @@ app.post("/admin/add-user", function(req, res) {
             console.log(err);
         }
     })
-})
+});
 
+app.post("/admin/dell-user",function(req,res) {
+    const voter_id = req.body.voter_id;
+    con.query(`SELECT leader FROM PARTY WHERE leader=${voter_id}`,function(err, result) {
+        if(!err) {
+            if(result.length === 0) {
+                con.query(`DELETE FROM VOTER WHERE voter_id=${voter_id}`,function(err) {
+                    if(!err) {
+                        res.redirect(`/admin/users/?value=successfully deleted voter id: ${voter_id}`);
+                    } else {
+                        console.log(err);
+                    }
+                });
+            } else {
+                res.redirect(`/admin/users/${voter_id}/?value=This user is Party Leader, cannot be removed`);
+            }
+        }
+    })
+});
+
+app.post("/admin/update-user",function(req, res) {
+    const voter_id = req.body.voter_id;
+    con.query(`SELECT voter_id, fname, lname, gender,age,address, ward_id, phone  FROM VOTER WHERE voter_id=${voter_id};SELECT ward_id from WARD`, function(err, result) {
+        if(!err) {
+            res.render("admin/users/add-user", {
+                wards: result[1],
+                voter: result[0][0]
+            });
+        }
+        else {
+            console.log(err);
+        }
+    })
+});
+
+app.post("/admin/update-user-D",function(req,res) {
+    const voter_id = req.body.id;
+    const fname = req.body.fname.trim();
+    const lname = req.body.lname.trim();
+    const gender = req.body.gender;
+    const age = req.body.age;
+    const address = req.body.address.trim();
+    const ward = req.body.ward;
+    const phno = req.body.phno;
+    con.query(`UPDATE VOTER SET fname='${fname}',lname='${lname}',gender='${gender}',age=${age},address='${address}',phone=${phno},ward_id=${ward} WHERE voter_id=${voter_id}`, function(err) {
+        if(!err) {
+            res.redirect(`/admin/users/${voter_id}/?value=Updated successfully`);
+        } else {
+            console.log(err);
+        }
+    })
+});
 
 //--------------------------------------------|| PARTY ROUTES FOR ADMIN ||-------------------------------------------------------||
 
 app.get("/admin/party",function(req, res) {
-    res.render("admin/party/party");
+    var sql = "SELECT * FROM PARTY";
+    con.query(sql,function(err,result) {
+        if(!err) {
+            res.render("admin/party/party", {
+                parties: result,
+                message: ""
+            });
+        } else {
+            console.log(err);
+        }
+    })
+    
 })
 
 
@@ -176,6 +234,7 @@ app.post("/admin/wards/add-del",function(req, res) {
         con.query(`INSERT INTO WARD VALUES(${id},'${name}')`, function(err) {
             if(err) {
                 console.log(err);
+                return res.redirect("/admin/wards?value=Ward already exists");
             } else {
                 const str = `success added ward no: ${id}`
                 console.log(str);
@@ -186,19 +245,6 @@ app.post("/admin/wards/add-del",function(req, res) {
 });
 
 
-
-app.get("/sample",function(req,res) {
-    if(req.query.value && req.query.type) {
-        var mes = {
-            "value" : req.query.value,
-            "type" : req.query.type
-        }
-        res.send(JSON.stringify(mes));
-    }
-    else {
-        res.send("value not present");
-    }
-})
 
 
 

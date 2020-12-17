@@ -27,28 +27,24 @@
 
     </div>
     <div class="col-lg-10 col-md-9 bar content">
-        <table>
-            <tr>
-                <td>ID______:</td>
-                <td><%- user.id %></td>
-            </tr>
-            <tr>
-                <td>FirstNAME______:</td>
-                <td><%- user.fname %></td>
-            </tr>
-            <tr>
-                <td>LastNAME______:</td>
-                <td><%- user.lname %></td>
-            </tr>
-            <tr>
-                <td>Gender______:</td>
-                <td><%- user.sex %></td>
-            </tr>
-        </table>
-        <form action="/admin/users/delete" method="POST">
-            <input type="hidden" name="user_id" value="<%- user.id %> ">
-            <input type="submit" value="Delete this candidate">
-        </form>
+        <% if(message !== "") {  %>
+            <h6><%- message.value %></h6>
+        <%  } %>
+    <h6>Voter id: <%- voter.voter_id %> </h6>
+    <h6>Name    : <%- voter.fname %> <%- voter.lname %> </h6>
+    <h6>gender  : <%- voter.gender %> </h6>
+    <h6>age     : <%- voter.age %> </h6>
+    <h6>address : <%- voter.address %> </h6>
+    <h6>Ward    : <%- voter.ward_id %> </h6>
+    <h6>Contact : <%- voter.phone %> </h6>
+    <form action="/admin/update-user" method="POST">
+        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+        <input class="btn btn-outline-primary" type="submit" value="Update Voter">
+    </form>
+    <form action="/admin/dell-user" method="POST">
+        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+        <input class="btn btn-danger" type="submit" value="Delete Voter">
+    </form>
         
     </div>
 </div>

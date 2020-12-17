@@ -26,7 +26,41 @@
   
     </div>
     <div class="col-lg-10 col-md-9 bar content">
-      
+      <% if(message !== "") { %>
+        <h4 style="color: black;"><%- message.value %></h4>
+      <% } %> 
+    
+    
+    <h3>Add Party</h3>
+    <a class="btn btn-success" href="/admin/add-party">Add Party</a>
+    <table class="table" style="text-align: center;">
+      <thead>
+        <tr class="table-primary">
+          <th scope="col">Party Id</th>
+          <th scope="col">Symbol</th>
+          <th scope="col">Name</th>
+          <th scope="col">Leader</th>
+          <th scope="col">Ward</th>
+          <th scope="col">Delete Party</th>            
+        </tr>
+      </thead>
+      <tbody>
+        <% parties.forEach(function (party) { %> 
+        <tr>
+          <th scope="row"><%- party.p_id %> </th>
+          <td>😄 😍 💗</td>
+          <td><%- party.pname %></td>
+          <td>voter name</td>
+          <td><%- party.ward_id %></td>
+          <td><form action="/admin/party/add-del" method="POST">
+            <input type="hidden" name="meth" value="delete">
+            <input type="hidden" name="ward_id" value="<%- party.p_id %>">
+            <input type="submit" class="btn btn-outline-danger" value="Delete Party">      
+          </form></td>
+        </tr>
+      <% }) %> 
+      </tbody>
+    </table>
     </div>
   </div>
   
