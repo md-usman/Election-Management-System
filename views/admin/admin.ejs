@@ -2,28 +2,32 @@
 
 
   <div class="row">
-    <div class="col-lg-2  col-md-3 sidebar">
-      <h2>Election Management System</h2>
-      <div >
-        <a href="/admin">
-          <h5 class="active">Dashboard</h5>
-        </a>
-        <a href="/admin/users">
-          <h5>Users</h5>
-        </a>
-        <a href="/admin/party">
-          <h5>Party</h5>
-        </a>
-        <a href="/admin/wards">
-          <h5>Wards</h5>
-        </a>
-        <a href="">
-          <h5>Result</h5>
-        </a>
-        <a href="">
-          <h5>Logout</h5>
-        </a>
+    <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
+      <div class="sticky-top">
+
+        <h2>Election Management System</h2>
+        <div >
+          <a href="/admin">
+            <h5 class="active">Dashboard</h5>
+          </a>
+          <a href="/admin/users">
+            <h5>Users</h5>
+          </a>
+          <a href="/admin/party">
+            <h5>Party</h5>
+          </a>
+          <a href="/admin/wards">
+            <h5>Wards</h5>
+          </a>
+          <a href="">
+            <h5>Result</h5>
+          </a>
+          <a href="">
+            <h5>Logout</h5>
+          </a>
+        </div>
       </div>
+      
       
     </div>
     <div class="col-lg-10 col-md-9 bar content">
@@ -31,17 +35,28 @@
       <h4>Lokshaba Elelction</h4>
       <table>
         <tr>
-          <td>Candidates </td>
-          <td> : 100</td>
+          <td> Total voters</td>
+          <td> : <%- stats.total %> </td>
         </tr>
         <tr>
-          <td>Parties </td>
-          <td> : 7</td>
+          <td> Total voted </td>
+          <td> : <%- stats.votes %> </td>
         </tr>
         <tr>
-          <td>votes </td>
-          <td> : 67</td>
+          <td>Total parties </td>
+          <td> : <%- stats.party %> </td>
         </tr>
+        <tr>
+          <td>Total wards </td>
+          <td> : <%- stats.wards %> </td>
+        </tr>
+        <% gender.forEach(function(gender) { %>
+         <tr>
+           <td><%- gender.gender %> </td>
+           <td> : <%- gender.total %> </td>
+         </tr>
+        <% }) %>
+        
       </table>
      </div>
   </div>

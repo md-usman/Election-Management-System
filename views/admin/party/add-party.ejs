@@ -2,8 +2,9 @@
 
 
 <div class="row">
-  <div class="col-lg-2  col-md-3 sidebar">
-    <h2>Election Management System</h2>
+  <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
+    <div class="sticky-top">
+      <h2>Election Management System</h2>
     <div>
       <a href="/admin">
         <h5>Dashboard</h5>
@@ -24,36 +25,30 @@
         <h5>Logout</h5>
       </a>
     </div>
+    </div>
+    
 
   </div>
   <div class="col-lg-10 col-md-9 bar content">
     <div>
-      <form name="addUser" action="/admin/add-party" method="POST" onsubmit="return validateForm()">
+      <% if(message !== "") { %>
+        <h6><%- message.value %></h6>
+      <% } %>
+      <form name="addParty" action="/admin/party/add-del" method="POST" onsubmit="return validateForm()">
         <label for="">Ward Id :</label>
-        <select name="ward" id="">
+        <select name="ward" >
           <% wards.forEach(function(ward) { %>
             <option value="<%- ward.ward_id %>"><%- ward.ward_id %></option> 
           <% }) %> 
         </select><br>
         <label for="">Party id :</label>
         <input type="number" name="pid"><br>
-        <label for="">Name :</label>
-        <input type="text" name="fname"><br>
-        <label for="">Last name :</label>
-        <input type="text" name="lname"><br>
-        <label>age</label>
-        <input type="number" name="age"><br>
-        <label for="">gender :</label>
-        <select name="gender" id="">
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="others">Others</option>
-        </select><br>
-        <label for="">Address :</label>
-        <input type="text" name="address"><br>
-        <label>Phone no :</label>
-        <input type="number" name="phno"><br>
-        <input type="submit" value="ADD USER">
+        <label for="">Party Name :</label>
+        <input type="text" name="pname"><br>
+        <label for="">Leader Id: </label>
+        <input type="hidden" name="meth" value="add">
+        <input type="number" name="leader" ><br>
+        <input type="submit" value="ADD PARTY">
 
       </form>
     </div>
@@ -66,25 +61,19 @@
 
 <script>
   function validateForm() {
-    var id = document.forms["addUser"]["id"].value;
-    var phone = document.forms["addUser"]["phno"].value.toString();
-    var fname = document.forms["addUser"]["fname"].value;
-    var lname = document.forms["addUser"]["lname"].value;
-    var age = document.forms["addUser"]["age"].value;
+    var id = document.forms["addParty"]["pid"].value;
+    var pname = document.forms["addParty"]["pname"].value;
+    var leader = document.forms["addParty"]["leader"].value;
     if(!id) {
-      alert ("Enter your id.....");
+      alert ("Please Enter Party Id >>>");
       return false;
     }
-    else if(isNullOrBlank(fname) || isNullOrBlank(lname)) {
-      alert ("Please enter your name");
+    else if(isNullOrBlank(pname)) {
+      alert ("Please enter Party name");
       return false;
     }
-    else if( age < 18) {
-      alert ("Your age is less than 18, You are eligible to vote");
-      return false;
-    }
-    else if( phone.length !== 10) {
-      alert("please enter your correct phone number");
+    else if(!leader) {
+      alert ("Please enter Leader id >>>");
       return false;
     } else {
       return true;

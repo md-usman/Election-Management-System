@@ -40,7 +40,16 @@ app.get("/login", function(req, res) {
 //--------------------------------------------|| ADMIN DASHBOARD ||-------------------------------------------------------||
 
 app.get("/admin", function(req, res) {
-    res.render("admin/admin");
+    con.query(`SELECT  COUNT(VR.voter_id) total, (SELECT COUNT(p_id) FROM VOTES) votes,(SELECT COUNT(ward_id) FROM WARD) wards,(SELECT COUNT(P.p_id) FROM PARTY P)party FROM VOTER VR;SELECT gender, count(*) total FROM VOTER GROUP BY gender`,function(err,result) {
+        if(!err) {
+            res.render("admin/admin", {
+                stats: result[0][0],
+                gender: result[1]
+            })
+        } else {
+            console.log(err);
+        }
+    })
 });
 
 
@@ -165,12 +174,17 @@ app.post("/admin/update-user-D",function(req,res) {
 //--------------------------------------------|| PARTY ROUTES FOR ADMIN ||-------------------------------------------------------||
 
 app.get("/admin/party",function(req, res) {
-    var sql = "SELECT * FROM PARTY";
+    var message = "";
+    if(req.query.value) {
+        message = {"value" :req.query.value};
+        JSON.stringify(message)
+    }
+    const sql = "SELECT * FROM PARTY";
     con.query(sql,function(err,result) {
         if(!err) {
             res.render("admin/party/party", {
                 parties: result,
-                message: ""
+                message: message
             });
         } else {
             console.log(err);
@@ -179,6 +193,73 @@ app.get("/admin/party",function(req, res) {
     
 })
 
+app.post("/admin/party/add-del", function(req,res) {
+    const method = req.body.meth;
+    if(method === 'delete') {
+        const p_id = req.body.p_id;
+        con.query(`DELETE FROM PARTY WHERE p_id=${p_id}`,function(err) {
+            if(!err) {
+                res.redirect(`/admin/party/?value=Successfully Deleted Party Id: ${p_id}`);
+            }
+            else {
+                console.log(err);
+            }
+        })
+    } else {
+        const reqWard = req.body.ward;
+        const p_id = req.body.pid;
+        const pname = req.body.pname;
+        const leader = req.body.leader;
+        con.query(`SELECT voter_id, ward_id FROM VOTER WHERE voter_id=${leader}`,function(err,result) {
+            if(!err) {
+                if(result.length === 0) {
+                    res.redirect("/admin/add-party/?value=The VOTER does not Exist...")
+                } else {
+                    const ward = JSON.stringify(result[0].ward_id);
+                    console.log(ward);
+                    console.log(reqWard);
+                    if(ward === reqWard) {
+                        con.query(`SELECT leader FROM PARTY WHERE leader=${leader}`,function(err,result1) {
+                            if(result1.length === 0) {
+                                con.query(`INSERT INTO PARTY VALUES(${p_id},'${pname}',${leader},${reqWard})`,function(err) {
+                                    if(!err) {
+                                        res.redirect(`/admin/party/?value=Successfully added Party Id: ${p_id}`);
+                                    } else {
+                                        console.log(err);
+                                        res.redirect("/admin/add-party/?value=Party Id already present");
+                                    }
+                                })
+                            } else {
+                                res.redirect("/admin/add-party/?value=Voter already a Leader for Other Party");
+                            }
+                        })
+                        
+                    } else {
+                        res.redirect("/admin/add-party/?value=Leader does not belong to the ward")
+                    }
+                }
+                
+            } else {
+                console.log(err);
+            }
+        })
+         
+    }
+});
+
+app.get("/admin/add-party",function(req,res) {
+    var message = "";
+    if(req.query.value) {
+        message = {"value":req.query.value};
+        JSON.stringify(message);
+    }
+    con.query(`SELECT ward_id FROM WARD`,function(err,result) {
+        res.render("admin/party/add-party", {
+            wards: result,
+            message: message
+        });
+    })
+})
 
 //--------------------------------------------|| WARD ROUTES FOR ADMIN ||-------------------------------------------------------||
 
