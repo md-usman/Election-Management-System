@@ -30,6 +30,9 @@
 
   </div>
   <div class="col-lg-10 col-md-9 bar content">
+    <% if(message !== "") { %>
+      <p><%- message.value %> </p>
+    <% } %>
     <div>
       <form name="addUser" 
       <% if(voter === "") { %> 

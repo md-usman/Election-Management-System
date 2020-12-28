@@ -52,14 +52,36 @@ app.get("/admin", function(req, res) {
     })
 });
 
+//--------------------------------------------|| RESULT ROUTES FOR ADMIN ||-------------------------------------------------------||
+
+app.get("/admin/result", function(req, res) {
+    con.query(`select W.ward_id, ward_name, (select count(voter_id) from VOTER V WHERE V.ward_id=W.ward_id ) voters from WARD W, VOTER group by W.ward_id order by W.ward_id;SELECT P.ward_id,P.p_id, P.pname, (select count(V.p_id) from VOTES V where P.p_id=V.p_id) votes from PARTY P order by P.ward_id ASC, votes DESC`,function(err,result) {
+        if(!err) {
+            res.render("admin/result/result", {
+                header: result[0],
+                body: result[1]
+            })
+        
+        } else {
+            console.log(err);
+        }
+    })
+
+})
 
 //--------------------------------------------|| USER ROUTES FOR ADMIN ||-------------------------------------------------------||
 
 app.get("/admin/users", function(req, res) {
+    var message = ""
+    if(req.query.value) {
+        message = {"value" : req.query.value};
+        JSON.stringify(message);
+    }
     con.query("SELECT voter_id, fname, lname, age, ward_id FROM VOTER", function(err, result) {
         if(!err) {
             res.render("admin/users/viewUser", {
-                voters: result
+                voters: result,
+                message: message
             });
         } else {
             console.log(err);
@@ -87,13 +109,20 @@ app.get("/admin/users/:id", function(req, res) {
 });
 
 app.get("/admin/add-user", function(req, res) {
+    var message = ""
+    if(req.query.value) {
+        message = {"value" : req.query.value};
+        JSON.stringify(message);
+    }
+
     con.query(`SELECT ward_id from WARD`, function(err, result) {
         if(err) {
             console.log(err);
         } else {
             res.render("admin/users/add-user", {
                 wards: result,
-                voter: ""
+                voter: "",
+                message: message
             });
         }
     })
@@ -114,6 +143,7 @@ app.post("/admin/add-user", function(req, res) {
             console.log("successfully added user");
             res.redirect("/admin/users");
         } else {
+            res.redirect("/admin/add-user/?value=user id already exists")
             console.log(err);
         }
     })
@@ -144,7 +174,8 @@ app.post("/admin/update-user",function(req, res) {
         if(!err) {
             res.render("admin/users/add-user", {
                 wards: result[1],
-                voter: result[0][0]
+                voter: result[0][0],
+                message: ""
             });
         }
         else {
@@ -170,6 +201,68 @@ app.post("/admin/update-user-D",function(req,res) {
         }
     })
 });
+
+app.post("/admin/add-mod", function(req,res) {
+    const mod_id = req.body.mod_id;
+    const voter_id = req.body.voter_id;
+    con.query(`SELECT voter_id FROM VOTER WHERE voter_id=${voter_id}`,function(err,result) {
+        if(!err) {
+            if(result.length === 0) {
+                res.redirect("/admin/moderator/?value=Invalid Voter Id");
+            } else {
+                con.query(`SELECT leader FROM PARTY WHERE leader=${voter_id}`,function(err, result) {
+                    if(!err) {
+                        if(result.length === 0) {
+                            con.query(`SELECT m_id FROM MODERATOR WHERE voter_id=${voter_id}`,function(err, result) {
+                                if(!err) {
+                                    if(result.length !== 0 ) {
+                                        res.redirect("/admin/moderator/?value=Moderator Already Exists");
+                                    } else {
+                                        con.query(`INSERT INTO MODERATOR VALUES(${mod_id},'moderator',${voter_id})`,function(err, result) {
+                                            if(!err) {
+                                                res.redirect(`/admin/moderator/?value=successfully added modeartor Id: ${mod_id} `);
+                                            } else {
+                                                res.redirect(`/admin/moderator/?value=Moderator Id Already Exists`);
+                                                console.log(err);
+                                            }
+                                        })
+                                    }
+                                } else {
+                                    console.log(err);
+                                }
+                            })
+                        } else {
+                            res.redirect("/admin/moderator/?value=Party Leader Cannot be Moderator")
+                        }
+                    }else {
+                        console.log(err);
+                    }
+                })
+            }
+        } else {
+            console.log(err);
+        }
+    })
+});
+
+app.get("/admin/moderator",function(req, res) {
+    var message = ""
+    if(req.query.value) {
+        message = {"value" : req.query.value};
+        JSON.stringify(message);
+    }
+    con.query(`select m_id, fname, lname, M.voter_id from MODERATOR M , VOTER V WHERE M.voter_id=V.voter_id`,function(err, result) {
+        if(!err) {
+            res.render("admin/moderator/moderator", {
+                moderator: result,
+                message: message
+            })
+        } else {
+            console.log(err);
+        }
+    })
+    
+})
 
 //--------------------------------------------|| PARTY ROUTES FOR ADMIN ||-------------------------------------------------------||
 
@@ -270,7 +363,6 @@ app.route("/admin/wards")
     if(req.query.value) {
         var message = {"value" : req.query.value};
         JSON.stringify(message);
-        console.log(message);
     } 
     con.query("SELECT * FROM WARD",function(err, result) {
         if(!err) {
@@ -325,9 +417,45 @@ app.post("/admin/wards/add-del",function(req, res) {
     }
 });
 
+//--------------------------------------------|| USER ROUTES FOR MODERATOR ||------------------------------------------------------||
+
+app.get("/moderator/:id",function(req, res) {
+    var message = "";
+    if(req.query.value) {
+        var message = {"value" : req.query.value};
+        JSON.stringify(message);
+    } 
+    const mod_id = req.params.id;
+    con.query(`select A.m_id, V.voter_id, fname, lname,age,ward_id from VOTER V, ADD_USER A where m_id=${mod_id} and V.voter_id=A.voter_id`,function(err, result) {
+        if(!err) {
+            res.render("moderator/moderator", {
+                voters: result,
+                m_id: result[0],
+                message: message
+            })
+        } else {
+            console.log(err);
+        }
+    })
+});
 
 
 
+//--------------------------------------------|| VOTING ROUTES FOR VOTERS ||-------------------------------------------------------||
+
+app.get("/vote",function(req, res) {
+    con.query(`Select * from PARTY`, function(err, result) {
+        if(!err) {
+            res.render("voting/vote", {
+                parties: result
+            })
+            
+        } else {
+            console.log(err);
+        }
+    })
+    
+})
 
 
 

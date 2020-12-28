@@ -10,10 +10,10 @@
         <h5>Dashboard</h5>
       </a>
       <a href="/admin/users">
-        <h5 class="active">Users</h5>
+        <h5 >Users</h5>
       </a>
       <a href="/admin/moderator">
-        <h5>Moderators</h5>
+        <h5  class="active">Moderators</h5>
       </a>
       <a href="/admin/party">
         <h5>Party</h5>
@@ -31,29 +31,36 @@
     </div>
   </div>
                                    
-  <div class="col-lg-10 col-md-9 content" id="main">
+  <div class="col-lg-10 col-md-9 bar content" id="main">
     <% if(message !== "") { %>
       <p><%- message.value %><br>
     <% } %> 
-    <a href="/admin/add-user" class="btn btn-success">ADD VOTER</a>
+    
+    <div id="addmod">
+      <form action="/admin/add-mod" method="POST">
+        <label for="">Moderator Id: </label>
+        <input type="number" name="mod_id">
+        <label for="">Voter Id: </label>
+        <input type="number" name="voter_id">
+        <input type="submit" class="btn btn-success">
+      </form>
+    </div>
     <table class="table" style="text-align: center;">
       <thead>
         <tr class="table-primary">
-          <th scope="col">Voter id</th>
+          <th scope="col">Moderator Id</th>
           <th scope="col">Name</th>
-          <th scope="col">Age</th>
-          <th scope="col">Ward id</th>
-          <th scope="col">View user</th>            
+          <th scope="col">Voter Id</th>
+          <th scope="col">View Moderator</th>            
         </tr>
       </thead>
       <tbody>
-        <% voters.forEach(function (voter) { %> 
+        <% moderator.forEach(function (mod) { %> 
         <tr>
-          <th scope="row"><%- voter.voter_id %> </th>
-          <td><%- voter.fname %> <%- voter.lname %> </td>
-          <td><%- voter.age %> </td>
-          <td><%- voter.ward_id %> </td>
-          <td><a href="/admin/users/<%- voter.voter_id %>" style="color:blueviolet">view user</a></td>
+          <th scope="row"><%- mod.m_id %> </th>
+          <td><%- mod.fname %> <%- mod.lname %> </td>
+          <td><%- mod.voter_id %> </td>
+          <td><a href="/admin/users/<%- mod.voter_id %>" style="color:blueviolet">view moderator</a></td>
         </tr>
       <% }) %> 
       </tbody>

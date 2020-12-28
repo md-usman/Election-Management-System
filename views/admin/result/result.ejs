@@ -1,0 +1,81 @@
+<%- include("../a-partials/a-header") -%> 
+
+
+  <div class="row">
+    <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
+      <div class="sticky-top">
+
+        <h2>Election Management System</h2>
+        <div >
+          <a href="/admin">
+            <h5 >Dashboard</h5>
+          </a>
+          <a href="/admin/users">
+            <h5>Users</h5>
+          </a>
+          <a href="/admin/moderator">
+            <h5>Moderators</h5>
+          </a>
+          <a href="/admin/party">
+            <h5>Party</h5>
+          </a>
+          <a href="/admin/wards">
+            <h5>Wards</h5>
+          </a>
+          <a href="/admin/result">
+            <h5 class="active">Result</h5>
+          </a>
+          <a href="">
+            <h5>Logout</h5>
+          </a>
+        </div>
+      </div>
+      
+      
+    </div>
+    <div class="col-lg-10 col-md-9 bar content">
+      <h3>Welcome Back</h3>
+      <h4>Lokshaba Elelction</h4>
+      <!---------------------->
+      <table class="table" style="text-align: center;">
+        <thead>
+          <tr class="table-primary">
+            <th scope="col">Ward No</th>
+            <th scope="col">Ward Name</th>
+            <th scope="col">Total Voters</th>
+            <th scope="col">See more</th>           
+          </tr>
+        </thead>
+        <tbody>
+          <% header.forEach(function (head) { %> 
+            <tr>
+              <th scope="row"><%- head.ward_id %> </th>
+              <td><%- head.ward_name %></td>
+              <td><%- head.voters %> </td>
+              <td data-toggle="collapse" data-target="#demo"><a>See more</a></td>
+            </tr>
+            <table class="table" style="text-align: center;">
+              <tbody>
+                <% body.forEach(function (body) { %>
+                  <% if(body.ward_id === head.ward_id) { %>
+                    <tr id="demo" class="collapse">
+                      <td ><%- body.p_id %></td>
+                      <td><%- body.pname %></td>
+                      <td><%- body.votes %> </td>
+                    </tr>
+                  <% } %>
+                <% }) %>
+              </tbody>
+            </table>
+          <% }) %> 
+        </tbody>
+      </table>
+      <!---------------------->
+      
+      <!---------------------->
+    </div>
+  </div>
+  
+  
+
+  <%- include("../a-partials/a-footer") -%> 
