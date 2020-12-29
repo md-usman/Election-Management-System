@@ -1,0 +1,41 @@
+<%- include("m-partials/m-header") -%>
+
+<div class="row">
+    <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
+      <div class="sticky-top">
+        <h2>Election Management System</h2>
+      <div>
+        <a href="/moderator/<%- m_id.value %> ">
+          <h5 class="active">Users</h5>
+        </a>
+        <a href="/login">
+          <h5>Logout</h5>
+        </a>
+      </div>
+      </div>
+    </div>
+                                     
+    <div class="col-lg-10 col-md-9 bar content" id="main">
+      <% if(message !== "") { %>
+        <p><%- message.value %><br>
+      <% } %> 
+      <h6>Voter id: <%- voter.voter_id %> </h6>
+    <h6>Name    : <%- voter.fname %> <%- voter.lname %> </h6>
+    <h6>gender  : <%- voter.gender %> </h6>
+    <h6>age     : <%- voter.age %> </h6>
+    <h6>address : <%- voter.address %> </h6>
+    <h6>Ward    : <%- voter.ward_id %> </h6>
+    <h6>Contact : <%- voter.phone %> </h6>
+    <form action="/moderator/<%- m_id.value %>/update-user" method="POST">
+        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+        <input class="btn btn-outline-primary" type="submit" value="Update Voter">
+    </form>
+    <form action="/moderator/dell-user" method="POST">
+        <input type="hidden" name="mod_id" value="<%- m_id.value %>">
+        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+        <input class="btn btn-danger" type="submit" value="Delete Voter">
+    </form>
+    </div>
+  </div>
+
+<%- include("m-partials/m-footer") -%>

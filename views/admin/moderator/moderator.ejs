@@ -37,7 +37,7 @@
     <% } %> 
     
     <div id="addmod">
-      <form action="/admin/add-mod" method="POST">
+      <form action="/admin/add-mod" method="POST" name="add_mod" onsubmit="return validateForm()">
         <label for="">Moderator Id: </label>
         <input type="number" name="mod_id">
         <label for="">Voter Id: </label>
@@ -51,7 +51,8 @@
           <th scope="col">Moderator Id</th>
           <th scope="col">Name</th>
           <th scope="col">Voter Id</th>
-          <th scope="col">View Moderator</th>            
+          <th scope="col">View Moderator</th>
+          <th scope="col">Delete Moderator</th>            
         </tr>
       </thead>
       <tbody>
@@ -61,6 +62,10 @@
           <td><%- mod.fname %> <%- mod.lname %> </td>
           <td><%- mod.voter_id %> </td>
           <td><a href="/admin/users/<%- mod.voter_id %>" style="color:blueviolet">view moderator</a></td>
+          <td><form action="/admin/moderator/delete" method="POST">
+            <input type="hidden" name="mod_id" value="<%- mod.m_id %>">
+            <input type="submit" class="btn btn-outline-danger" value="Delete Moderator">      
+          </form></td>
         </tr>
       <% }) %> 
       </tbody>
@@ -68,6 +73,21 @@
   </div>
 </div>
 
+<script>
+  function validateForm() {
+    var mod_id = document.forms["add_mod"]["mod_id"].value;
+    var voter_id = document.forms["add_mod"]["voter_id"].value;
+    if(!mod_id || !voter_id) {
+      alert ("Fields cannot be empty....");
+      return false;
+    } else {
+      return true;
+    }
+  }
+  function isNullOrBlank(str) {
+    return (!str || str.length === 0 || !str.trim())
+  }
+</script>
 
 
 <%- include("../a-partials/a-footer") -%>

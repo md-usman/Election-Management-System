@@ -262,6 +262,17 @@ app.get("/admin/moderator",function(req, res) {
         }
     })
     
+});
+
+app.post("/admin/moderator/delete", function(req,res) {
+    const mod_id = req.body.mod_id;
+    con.query(`DELETE FROM MODERATOR WHERE m_id=${mod_id}`, function(err) {
+        if(!err) {
+            res.redirect(`/admin/moderator/?value=Deleted Moderator Id: ${mod_id}`);
+        } else {
+            console.log(err);
+        }
+    })
 })
 
 //--------------------------------------------|| PARTY ROUTES FOR ADMIN ||-------------------------------------------------------||
@@ -425,12 +436,13 @@ app.get("/moderator/:id",function(req, res) {
         var message = {"value" : req.query.value};
         JSON.stringify(message);
     } 
-    const mod_id = req.params.id;
-    con.query(`select A.m_id, V.voter_id, fname, lname,age,ward_id from VOTER V, ADD_USER A where m_id=${mod_id} and V.voter_id=A.voter_id`,function(err, result) {
+    const mod_id = {"value": req.params.id};
+    JSON.stringify(mod_id);
+    con.query(`select A.m_id, V.voter_id, fname, lname,age,ward_id from VOTER V, ADD_USER A where m_id=${mod_id.value} and V.voter_id=A.voter_id`,function(err, result) {
         if(!err) {
             res.render("moderator/moderator", {
                 voters: result,
-                m_id: result[0],
+                m_id: mod_id,
                 message: message
             })
         } else {
@@ -439,7 +451,132 @@ app.get("/moderator/:id",function(req, res) {
     })
 });
 
+app.get("/moderator/viewUser/:m_id/:v_id", function(req, res) {
+    const id = req.params.v_id;
+    var message = ""
+    if(req.query.value) {
+        message = {"value" : req.query.value};
+        JSON.stringify(message);
+    }
+    const mod_id = {"value": req.params.m_id};
+    JSON.stringify(mod_id);
+    con.query(`SELECT * FROM VOTER WHERE voter_id=${id}`, function(err, result) {
+        if(!err) {
+            res.render("moderator/viewUser", {
+                m_id: mod_id,
+                voter: result[0],
+                message: message
+            });
+        } else {
+            console.log(err);
+        }
+    });
+})
 
+app.get("/moderator/:id/add-user", function(req, res) {
+    var message = "";
+    if(req.query.value) {
+        var message = {"value" : req.query.value};
+        JSON.stringify(message);
+    } 
+    const mod_id = {"value" :req.params.id};
+    JSON.stringify(mod_id);
+    con.query(`SELECT ward_id from WARD`, function(err, result) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.render("moderator/add-user", {
+                m_id: mod_id,
+                wards: result,
+                voter: "",
+                message: message
+            });
+        }
+    })
+});
+
+app.post("/moderator/:id/add-user", function(req, res){
+    const mod_id= req.params.id;
+    const id = req.body.id;
+    const fname = req.body.fname.trim();
+    const lname = req.body.lname.trim();
+    const gender = req.body.gender;
+    const age = req.body.age;
+    const address = req.body.address.trim();
+    const ward = req.body.ward;
+    const phno = req.body.phno;
+    con.query(`INSERT INTO VOTER VALUES(${id}, "${fname}","${lname}","${fname}","${gender}",${age},"${address}",${ward},${phno})`, function(err) {
+        if(!err) {
+            con.query(`INSERT INTO ADD_USER VALUES(${mod_id}, ${id})`, function(err) {
+                console.log("successfully added user");
+                res.redirect(`/moderator/${mod_id}/?value=Successfully added voter ID: ${id}`);
+            })
+        } else {
+            res.redirect(`/moderator/${mod_id}/add-user/?value=user id already exists`)
+            console.log(err);
+        }
+    })
+})
+
+app.post("/moderator/dell-user",function(req, res) {
+    const voter_id = req.body.voter_id;
+    const mod_id = req.body.mod_id;
+    con.query(`SELECT leader FROM PARTY WHERE leader=${voter_id}`,function(err, result) {
+        if(!err) {
+            if(result.length === 0) {
+                con.query(`DELETE FROM VOTER WHERE voter_id=${voter_id}`,function(err) {
+                    if(!err) {
+                        res.redirect(`/moderator/${mod_id}/?value=successfully deleted voter id: ${voter_id}`);
+                    } else {
+                        console.log(err);
+                    }
+                });
+            } else {
+                res.redirect(`/moderator/${mod_id}/${voter_id}/?value=This user is Party Leader, cannot be removed`);
+            }
+        } else {
+            console.log(err);
+        }
+    })
+})
+
+app.post("/moderator/:id/update-user",function(req, res) {
+    const mod_id = {"value" :req.params.id};
+    JSON.stringify(mod_id);
+    const voter_id = req.body.voter_id;
+    con.query(`SELECT voter_id, fname, lname, gender,age,address, ward_id, phone  FROM VOTER WHERE voter_id=${voter_id};SELECT ward_id from WARD`, function(err, result) {
+        if(!err) {
+            res.render("moderator/add-user", {
+                wards: result[1],
+                voter: result[0][0],
+                message: "",
+                m_id: mod_id
+            });
+        }
+        else {
+            console.log(err);
+        }
+    })
+});
+
+app.post("/moderator/:id/update-user-D", function(req, res) {
+    const mod_id = req.params.id;
+    const voter_id = req.body.id;
+    const fname = req.body.fname.trim();
+    const lname = req.body.lname.trim();
+    const gender = req.body.gender;
+    const age = req.body.age;
+    const address = req.body.address.trim();
+    const ward = req.body.ward;
+    const phno = req.body.phno;
+    con.query(`UPDATE VOTER SET fname='${fname}',lname='${lname}',gender='${gender}',age=${age},address='${address}',phone=${phno},ward_id=${ward} WHERE voter_id=${voter_id}`, function(err) {
+        if(!err) {
+            res.redirect(`/moderator/viewUser/${mod_id}/${voter_id}/?value=Updated successfully`);
+        } else {
+            console.log(err);
+        }
+    }) 
+})
 
 //--------------------------------------------|| VOTING ROUTES FOR VOTERS ||-------------------------------------------------------||
 

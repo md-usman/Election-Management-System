@@ -5,7 +5,7 @@
       <div class="sticky-top">
         <h2>Election Management System</h2>
       <div>
-        <a href="/moderator/<%- m_id.m_id %> ">
+        <a href="/moderator/<%- m_id.value %> ">
           <h5 class="active">Users</h5>
         </a>
         <a href="/login">
@@ -19,7 +19,7 @@
       <% if(message !== "") { %>
         <p><%- message.value %><br>
       <% } %> 
-      <a href="/moderator/<%- m_id.m_id %>/add-user" class="btn btn-success">ADD VOTER</a>
+      <a href="/moderator/<%- m_id.value %>/add-user" class="btn btn-success">ADD VOTER</a>
       <table class="table" style="text-align: center;">
         <thead>
           <tr class="table-primary">
@@ -37,7 +37,7 @@
             <td><%- voter.fname %> <%- voter.lname %> </td>
             <td><%- voter.age %> </td>
             <td><%- voter.ward_id %> </td>
-            <td><a href="/admin/users/<%- voter.voter_id %>" style="color:blueviolet">view user</a></td>
+            <td><a href="/moderator/viewUser/<%- m_id.value %>/<%- voter.voter_id %>" style="color:blueviolet">view user</a></td>
           </tr>
         <% }) %> 
         </tbody>

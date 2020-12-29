@@ -5,7 +5,7 @@
       <div class="sticky-top">
         <h2>Election Management System</h2>
       <div>
-        <a href="/moderator/<%- m_id.m_id %> ">
+        <a href="/moderator/<%- m_id.value %>">
           <h5 class="active">Users</h5>
         </a>
         <a href="/login">
@@ -22,9 +22,9 @@
       <div>
         <form name="addUser" 
         <% if(voter === "") { %> 
-          action="/admin/add-user"
+          action="/moderator/<%- m_id.value %>/add-user"
         <% } else { %>
-          action="/admin/update-user-D"
+          action="/moderator/<%- m_id.value %>/update-user-D"
         <% } %>
          method="POST" onsubmit="return validateForm()">
           <label for="">Ward number :</label>
@@ -150,5 +150,5 @@
   </script>
   
   
-  <%- include("../a-partials/a-footer") -%>
+  <%- include("m-partials/m-footer") -%>
     
