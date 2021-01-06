@@ -1,12 +1,24 @@
 <%- include("../partials/header") -%>
 
-<% parties.forEach(function(party) { %>
+
+<h4><%- voter.voter_id %></h4>
+<h4><%- voter.fname %> <%- voter.lname %></h4><br>
+
+<% if(voted.vote) { %>
+  <p>You have already voted</p>
+<% } %> 
+
     <div id="selectedParty">
-      <input type="radio" name="pname" value="<%- party.p_id %>">
-      <label > <%- party.pname %></label>
+      <form action="/vote/<%- voter.voter_id %>" name="partyVote" method="POST">
+        <% parties.forEach(function(party) { %>
+        <input type="radio" name="pname" value="<%- party.p_id %>">
+        <label><%- party.p_id %>: <%- party.pname %></label><br>
+        <% }) %>
+      <input type="submit">
+      </form>
     </div><br>
     
-<% }) %>
+
 
 <script>
     document.get

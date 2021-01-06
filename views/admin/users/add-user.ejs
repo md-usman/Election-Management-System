@@ -34,13 +34,20 @@
       <p><%- message.value %> </p>
     <% } %>
     <div>
-      <form name="addUser" 
+      <div class="preview">
+        <img id="file_preview"
+        <% if (image !== "") { %>
+           src="http://localhost:3000/uploads/<%= image %>"
+        <% } %>
+        >
+			</div>
+      <form name="addUser" enctype="multipart/form-data" 
       <% if(voter === "") { %> 
         action="/admin/add-user"
       <% } else { %>
         action="/admin/update-user-D"
       <% } %>
-       method="POST" onsubmit="return validateForm()">
+       method="POST"  onsubmit="return validateForm()">
         <label for="">Ward number :</label>
         <select name="ward" id="">
           <% wards.forEach(function(ward) { %>
@@ -73,7 +80,9 @@
           value="<%- voter.lname %>"
         <% } %> 
         ><br>
-        <label>age</label>
+        <label for="upload_img">Upload image</label>
+				<input type="file" name="image" id="upload_img" accept="image/*" onchange="showPreview(event);">
+        <br><label>age</label>
         <input type="number" name="age"
         <% if(voter != "") { %> 
           value="<%- voter.age %>"
@@ -161,6 +170,14 @@
   function isNullOrBlank(str) {
     return (!str || str.length === 0 || !str.trim())
   }
+  function showPreview(event) {
+		if(event.target.files.length > 0) {
+			var src = URL.createObjectURL(event.target.files[0]);
+			var preview = document.getElementById("file_preview");
+			preview.src = src;
+			preview.style.display ="block";
+		}
+	}
 </script>
 
 

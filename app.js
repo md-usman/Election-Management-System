@@ -6,6 +6,9 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mysql = require("mysql");
 const { json } = require('body-parser');
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 const con = mysql.createConnection( {
     host: process.env.HOST,
@@ -29,6 +32,17 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 
+const Storage = multer.diskStorage({
+	destination : './public/uploads',
+	filename: function(req, file, cb) {
+		cb(null, file.fieldname +"-"+ Date.now() +path.extname(file.originalname));
+	}
+})
+
+const upload = multer( {
+	storage: Storage
+});
+
 app.get("/", function(req, res) {
     res.render("home");
 })
@@ -51,6 +65,10 @@ app.get("/admin", function(req, res) {
         }
     })
 });
+
+app.get("/admin/login", function(req, res) {
+    res.render("admin/login");
+})
 
 //--------------------------------------------|| RESULT ROUTES FOR ADMIN ||-------------------------------------------------------||
 
@@ -100,7 +118,8 @@ app.get("/admin/users/:id", function(req, res) {
         if(!err) {
             res.render("admin/users/user", {
                 voter: result[0],
-                message: message
+                message: message,
+                image : result[0].image.replace(/['"]+/g, '')
             });
         } else {
             console.log(err);
@@ -114,7 +133,7 @@ app.get("/admin/add-user", function(req, res) {
         message = {"value" : req.query.value};
         JSON.stringify(message);
     }
-
+    var image = "";
     con.query(`SELECT ward_id from WARD`, function(err, result) {
         if(err) {
             console.log(err);
@@ -122,14 +141,15 @@ app.get("/admin/add-user", function(req, res) {
             res.render("admin/users/add-user", {
                 wards: result,
                 voter: "",
-                message: message
+                message: message,
+                image : image
             });
         }
     })
     
 })
 
-app.post("/admin/add-user", function(req, res) {
+app.post("/admin/add-user",upload.single("image"), function(req, res) {
     const id = req.body.id;
     const fname = req.body.fname.trim();
     const lname = req.body.lname.trim();
@@ -138,10 +158,11 @@ app.post("/admin/add-user", function(req, res) {
     const address = req.body.address.trim();
     const ward = req.body.ward;
     const phno = req.body.phno;
-    con.query(`INSERT INTO VOTER VALUES(${id}, "${fname}","${lname}","${fname}","${gender}",${age},"${address}",${ward},${phno})`, function(err) {
+    const image = JSON.stringify(req.file.filename).replace(/['"]+/g, '');
+    con.query(`INSERT INTO VOTER VALUES(${id}, "${fname}","${lname}","${fname}","${gender}",${age},"${address}",${ward},${phno},'${image}')`, function(err) {
         if(!err) {
-            console.log("successfully added user");
-            res.redirect("/admin/users");
+            console.log("successfully added user");10
+            res.redirect(`/admin/users/?value=successfully added voter Id: ${id}` );
         } else {
             res.redirect("/admin/add-user/?value=user id already exists")
             console.log(err);
@@ -154,13 +175,27 @@ app.post("/admin/dell-user",function(req,res) {
     con.query(`SELECT leader FROM PARTY WHERE leader=${voter_id}`,function(err, result) {
         if(!err) {
             if(result.length === 0) {
-                con.query(`DELETE FROM VOTER WHERE voter_id=${voter_id}`,function(err) {
+                con.query(`select image from VOTER where voter_id=${voter_id}`, function(err, result) {
                     if(!err) {
-                        res.redirect(`/admin/users/?value=successfully deleted voter id: ${voter_id}`);
-                    } else {
+                        fs.unlink(`public/uploads/${result[0].image.replace(/['"]+/g, '')}`,function(err) {
+                            if(!err) {
+                                console.log("successfully deleted Image");
+                            } else {
+                                console.log(err);
+                            }
+                        })
+                        con.query(`DELETE FROM VOTER WHERE voter_id=${voter_id}`,function(err) {
+                            if(!err) {
+                                res.redirect(`/admin/users/?value=successfully deleted voter id: ${voter_id}`);
+                            } else {
+                                console.log(err);
+                            }
+                        });
+                    }else {
                         console.log(err);
                     }
-                });
+                })
+                
             } else {
                 res.redirect(`/admin/users/${voter_id}/?value=This user is Party Leader, cannot be removed`);
             }
@@ -168,15 +203,17 @@ app.post("/admin/dell-user",function(req,res) {
     })
 });
 
-app.post("/admin/update-user",function(req, res) {
+app.post("/admin/update-user", function(req, res) {
     const voter_id = req.body.voter_id;
-    con.query(`SELECT voter_id, fname, lname, gender,age,address, ward_id, phone  FROM VOTER WHERE voter_id=${voter_id};SELECT ward_id from WARD`, function(err, result) {
+    con.query(`SELECT voter_id, fname, lname, gender,age,address, ward_id, phone, image  FROM VOTER WHERE voter_id=${voter_id};SELECT ward_id from WARD`, function(err, result) {
         if(!err) {
             res.render("admin/users/add-user", {
                 wards: result[1],
                 voter: result[0][0],
-                message: ""
+                message: "",
+                image: result[0][0].image.replace(/['"]+/g, '')
             });
+            
         }
         else {
             console.log(err);
@@ -184,7 +221,7 @@ app.post("/admin/update-user",function(req, res) {
     })
 });
 
-app.post("/admin/update-user-D",function(req,res) {
+app.post("/admin/update-user-D", upload.single("image"),function(req,res) {
     const voter_id = req.body.id;
     const fname = req.body.fname.trim();
     const lname = req.body.lname.trim();
@@ -193,13 +230,39 @@ app.post("/admin/update-user-D",function(req,res) {
     const address = req.body.address.trim();
     const ward = req.body.ward;
     const phno = req.body.phno;
-    con.query(`UPDATE VOTER SET fname='${fname}',lname='${lname}',gender='${gender}',age=${age},address='${address}',phone=${phno},ward_id=${ward} WHERE voter_id=${voter_id}`, function(err) {
-        if(!err) {
-            res.redirect(`/admin/users/${voter_id}/?value=Updated successfully`);
-        } else {
-            console.log(err);
-        }
-    })
+    if(req.file) {
+        con.query(`SELECT image FROM VOTER WHERE voter_id=${voter_id}`,function(err, result) {
+            if(!err) {
+                fs.unlink(`public/uploads/${result[0].image.replace(/['"]+/g, '')}`,function(err) {
+                    if(!err) {
+                        console.log("successfully deleted Image");
+                    } else {
+                        console.log(err);
+                    }
+                })
+            } else {
+                console.log(err);
+            }
+        })
+        const image = JSON.stringify(req.file.filename).replace(/['"]+/g, '');
+        con.query(`UPDATE VOTER SET fname='${fname}',lname='${lname}',gender='${gender}',age=${age},address='${address}',phone=${phno},ward_id=${ward},image='${image}' WHERE voter_id=${voter_id}`, function(err) {
+            if(!err) {
+                res.redirect(`/admin/users/${voter_id}/?value=Updated successfully`);
+            } else {
+                console.log(err);
+            }
+        })
+    } else {
+        
+        con.query(`UPDATE VOTER SET fname='${fname}',lname='${lname}',gender='${gender}',age=${age},address='${address}',phone=${phno},ward_id=${ward} WHERE voter_id=${voter_id}`, function(err) {
+            if(!err) {
+                res.redirect(`/admin/users/${voter_id}/?value=Updated successfully`);
+            } else {
+                console.log(err);
+            }
+        })
+    }
+    
 });
 
 app.post("/admin/add-mod", function(req,res) {
@@ -297,10 +360,25 @@ app.get("/admin/party",function(req, res) {
     
 })
 
-app.post("/admin/party/add-del", function(req,res) {
+app.post("/admin/party/add-del",upload.single("logo"), function(req,res) {
     const method = req.body.meth;
     if(method === 'delete') {
         const p_id = req.body.p_id;
+        con.query(`select logo from PARTY where p_id=${p_id}`, function(err, result) {
+            if(!err) {
+                if(result[0] !== null) {
+                    fs.unlink(`public/uploads/${result[0].image.replace(/['"]+/g, '')}`,function(err) {
+                        if(!err) {
+                            console.log("successfully deleted Image");
+                        } else {
+                            console.log(err);
+                        }
+                    })
+                }
+            }else {
+                console.log(err);
+            }
+        })
         con.query(`DELETE FROM PARTY WHERE p_id=${p_id}`,function(err) {
             if(!err) {
                 res.redirect(`/admin/party/?value=Successfully Deleted Party Id: ${p_id}`);
@@ -314,6 +392,7 @@ app.post("/admin/party/add-del", function(req,res) {
         const p_id = req.body.pid;
         const pname = req.body.pname;
         const leader = req.body.leader;
+        const logo = JSON.stringify(req.file.filename).replace(/['"]+/g, '');
         con.query(`SELECT voter_id, ward_id FROM VOTER WHERE voter_id=${leader}`,function(err,result) {
             if(!err) {
                 if(result.length === 0) {
@@ -325,7 +404,7 @@ app.post("/admin/party/add-del", function(req,res) {
                     if(ward === reqWard) {
                         con.query(`SELECT leader FROM PARTY WHERE leader=${leader}`,function(err,result1) {
                             if(result1.length === 0) {
-                                con.query(`INSERT INTO PARTY VALUES(${p_id},'${pname}',${leader},${reqWard})`,function(err) {
+                                con.query(`INSERT INTO PARTY VALUES(${p_id},'${pname}',${leader},${reqWard},'${logo}')`,function(err) {
                                     if(!err) {
                                         res.redirect(`/admin/party/?value=Successfully added Party Id: ${p_id}`);
                                     } else {
@@ -428,9 +507,16 @@ app.post("/admin/wards/add-del",function(req, res) {
     }
 });
 
+//--------------------------------------------|| LOGIN ROUTES FOR MODERATOR ||------------------------------------------------------||
+
+app.get("/moderator/login", function(req, res) {
+    res.render("moderator/login");
+})
+
 //--------------------------------------------|| USER ROUTES FOR MODERATOR ||------------------------------------------------------||
 
 app.get("/moderator/:id",function(req, res) {
+    res.setHeader("cookie","jou9u9384948fsjfno");
     var message = "";
     if(req.query.value) {
         var message = {"value" : req.query.value};
@@ -452,6 +538,7 @@ app.get("/moderator/:id",function(req, res) {
 });
 
 app.get("/moderator/viewUser/:m_id/:v_id", function(req, res) {
+    console.log(req.headers);
     const id = req.params.v_id;
     var message = ""
     if(req.query.value) {
@@ -580,18 +667,53 @@ app.post("/moderator/:id/update-user-D", function(req, res) {
 
 //--------------------------------------------|| VOTING ROUTES FOR VOTERS ||-------------------------------------------------------||
 
-app.get("/vote",function(req, res) {
-    con.query(`Select * from PARTY`, function(err, result) {
+app.get("/vote/:voter_id",function(req, res) {
+    const voter_id = req.params.voter_id;
+    con.query(`SELECT voter_id FROM VOTES WHERE voter_id=${voter_id}`, function(err, result) {
         if(!err) {
-            res.render("voting/vote", {
-                parties: result
-            })
-            
+            if(result.length !== 0) {
+                con.query(`select p_id, pname from PARTY P, VOTER V where P.ward_id=V.ward_id and voter_id=${voter_id}; SELECT voter_id, fname, lname FROM VOTER WHERE voter_id=${voter_id}`, function(err, result) {
+                    if(!err) {
+                        if(result[0].length === 0) { return res.send("Voter does not exist")}
+                        res.render("voting/vote", {
+                            voter: result[1][0],
+                            voted: {"vote":true},
+                            parties: result[0]
+                        })
+                    }else {
+                        console.log(err);
+                    }
+                })
+            } else {
+                con.query(`select p_id, pname from PARTY P, VOTER V where P.ward_id=V.ward_id and voter_id=${voter_id}; SELECT voter_id, fname, lname FROM VOTER WHERE voter_id=${voter_id}`, function(err, result) {
+                    if(!err) {
+                        if(result[0].length === 0) { return res.send("Voter does not exist")}
+                        res.render("voting/vote", {
+                            voter: result[1][0],
+                            voted: {"vote":false},
+                            parties: result[0]
+                        })
+                    } else {
+                        console.log(err);
+                    }
+                }) 
+            }
         } else {
             console.log(err);
         }
     })
-    
+})
+
+app.post("/vote/:voter_id", function(req, res) {
+    const id = req.params.voter_id;
+    const party_id = req.body.pname;
+    con.query(`INSERT INTO VOTES VALUES(${party_id},${id})`, function(err) {
+        if(!err) {
+            res.redirect('back');
+        } else {
+            console.log(err);
+        }
+    })
 })
 
 

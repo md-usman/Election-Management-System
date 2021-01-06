@@ -43,6 +43,7 @@
     <h6>address : <%- voter.address %> </h6>
     <h6>Ward    : <%- voter.ward_id %> </h6>
     <h6>Contact : <%- voter.phone %> </h6>
+    <img src="http://localhost:3000/uploads/<%= image %>" alt="profile">
     <form action="/admin/update-user" method="POST">
         <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
         <input class="btn btn-outline-primary" type="submit" value="Update Voter">

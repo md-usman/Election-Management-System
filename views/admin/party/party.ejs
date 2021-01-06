@@ -54,7 +54,7 @@
         <% parties.forEach(function (party) { %> 
         <tr>
           <th scope="row"><%- party.p_id %> </th>
-          <td>😄 😍 💗</td>
+          <td><img src="http://localhost:3000/uploads/<%- JSON.stringify(party.logo).replace(/['"]+/g, '') %>" alt="logo" style="width:40px; height: 40px"></td>
           <td><%- party.pname %></td>
           <td><%- party.leader %></td>
           <td><%- party.ward_id %></td>
