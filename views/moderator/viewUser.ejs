@@ -1,4 +1,12 @@
 <%- include("m-partials/m-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+
+</head>
+<body>
+
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+</head>
+<body>
 
 <div class="row">
     <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
@@ -8,33 +16,67 @@
         <a href="/moderator/<%- m_id.value %> ">
           <h5 class="active">Users</h5>
         </a>
-        <a href="/login">
-          <h5>Logout</h5>
-        </a>
+        <form action="/mod/logout" method="POST">
+          <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+        </form>
       </div>
       </div>
     </div>
                                      
     <div class="col-lg-10 col-md-9 bar content" id="main">
       <% if(message !== "") { %>
-        <p><%- message.value %><br>
-      <% } %> 
-      <h6>Voter id: <%- voter.voter_id %> </h6>
-    <h6>Name    : <%- voter.fname %> <%- voter.lname %> </h6>
-    <h6>gender  : <%- voter.gender %> </h6>
-    <h6>age     : <%- voter.age %> </h6>
-    <h6>address : <%- voter.address %> </h6>
-    <h6>Ward    : <%- voter.ward_id %> </h6>
-    <h6>Contact : <%- voter.phone %> </h6>
-    <form action="/moderator/<%- m_id.value %>/update-user" method="POST">
-        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
-        <input class="btn btn-outline-primary" type="submit" value="Update Voter">
-    </form>
-    <form action="/moderator/dell-user" method="POST">
-        <input type="hidden" name="mod_id" value="<%- m_id.value %>">
-        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
-        <input class="btn btn-danger" type="submit" value="Delete Voter">
-    </form>
+        <div class="message"><p><%- message.value %></div>
+      <% } %>
+      <div class="view-user-outline">
+        <h2 style="color:#007bff">Voter Details</h2>
+        <div class="form-div">
+          <div class="form-object">
+            <h5 class="display-box">Voter id: <%- voter.voter_id %> </h5>
+          </div>
+          <div class="form-object">
+            <h5 class="display-box">Name    : <%- voter.fname.toUpperCase() %> <%- voter.lname.toUpperCase() %> </h5>
+          </div>
+        </div>
+        <div class="form-div">
+          <div class="form-object">
+            <h5 class="display-box">Gender  : <%- voter.gender.toUpperCase() %></h5>
+          </div>
+          <div class="form-object">
+            <h5 class="display-box">Age     : <%- voter.age %></h5>
+          </div>
+        </div>
+        <div class="form-div">
+          <div class="form-object">
+            <h5 class="display-box">Address : <%- voter.address %> </h5>
+          </div>
+          <div class="form-object">
+            <h5 class="display-box">Ward    : <%- voter.ward_id %> </h5>
+          </div>
+        </div>
+        <div class="form-div">
+          <div class="form-object">
+            <img src="http://localhost:3000/uploads/<%= image %>" alt="profile">
+          </div>
+          <div class="form-object">
+            <div class="form-object-item">
+              <h5 class="display-box">Phone : <%- voter.phone %> </h5>
+            </div>
+            <div class="form-object">
+              <form action="/moderator/<%- m_id.value %>/update-user" method="POST">
+                <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+                <input class="btn btn-outline-primary" type="submit" value="Update Voter">
+            </form>
+            </div>
+            <div class="form-object">
+              <form action="/moderator/dell-user" method="POST">
+                <input type="hidden" name="mod_id" value="<%- m_id.value %>">
+                <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+                <input class="btn btn-outline-danger" type="submit" value="Delete Voter">
+            </form>
+            </div>
+          </div>
+        </div>    
+      </div> 
     </div>
   </div>
 

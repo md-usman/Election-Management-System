@@ -1,4 +1,10 @@
-<%- include("../a-partials/a-header") -%> 
+<%- include("../a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+
+</head>
+
+<body>
+
 
 
   <div class="row">
@@ -6,12 +12,12 @@
       <div class="sticky-top">
 
         <h2>Election Management System</h2>
-        <div >
+        <div>
           <a href="/admin">
-            <h5 >Dashboard</h5>
+            <h5>Dashboard</h5>
           </a>
           <a href="/admin/users">
-            <h5>Users</h5>
+            <h5>Voters</h5>
           </a>
           <a href="/admin/moderator">
             <h5>Moderators</h5>
@@ -25,57 +31,93 @@
           <a href="/admin/result">
             <h5 class="active">Result</h5>
           </a>
-          <a href="">
-            <h5>Logout</h5>
+          <a href="/admin/vote-log">
+            <h5>Vote Log</h5>
           </a>
+          <form action="/logout/admin" method="POST">
+            <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+          </form>
         </div>
       </div>
-      
-      
+
+
     </div>
     <div class="col-lg-10 col-md-9 bar content">
-      <h3>Welcome Back</h3>
-      <h4>Lokshaba Elelction</h4>
-      <!---------------------->
-      <table class="table" style="text-align: center;">
-        <thead>
-          <tr class="table-primary">
-            <th scope="col">Ward No</th>
-            <th scope="col">Ward Name</th>
-            <th scope="col">Total Voters</th>
-            <th scope="col">See more</th>           
-          </tr>
-        </thead>
-        <tbody>
-          <% header.forEach(function (head) { %> 
-            <tr>
-              <th scope="row"><%- head.ward_id %> </th>
-              <td><%- head.ward_name %></td>
-              <td><%- head.voters %> </td>
-              <td data-toggle="collapse" data-target="#demo"><a>See more</a></td>
-            </tr>
-            <table class="table" style="text-align: center;">
-              <tbody>
-                <% body.forEach(function (body) { %>
-                  <% if(body.ward_id === head.ward_id) { %>
-                    <tr id="demo" class="collapse">
-                      <td ><%- body.p_id %></td>
-                      <td><%- body.pname %></td>
-                      <td><%- body.votes %> </td>
-                    </tr>
-                  <% } %>
-                <% }) %>
-              </tbody>
-            </table>
-          <% }) %> 
-        </tbody>
-      </table>
-      <!---------------------->
-      
-      <!---------------------->
+      <h2 style="color:#007bff">Current Election Statistics</h2>
+      <div class="table-outline">
+        <% if(ele_status === 'true') { %>
+          <form action="/admin/result-status" method="POST">
+            <input type="submit" class="btn btn-warning button" value="Declare Result">
+          </form>
+        <% } else { %>
+          <a class="btn btn-secondary button disabled">Results Declared</a>
+        <% } %>
+        
+        <div class="table-border">
+          <table class="table" style="text-align: center;">
+            <thead>
+              <div class="res-table-head">
+                <tr style="background-color: #b8daff;">
+                  <th scope="col">
+                    <h4>Ward Id</h4>
+                  </th>
+                  <th scope="col">
+                    <h4>Position</h4>
+                  </th>
+                  <th scope="col">
+                    <h4>Party Id</h4>
+                  </th>
+                  <th scope="col">
+                    <h4>Party Name</h4>
+                  </th>
+                  <th scope="col">
+                    <h4>Votes</h4>
+                  </th>
+                </tr>
+              </div>
+            </thead>
+            <tbody>
+              <% header.forEach(function(head) { %>
+              <div class="res-table">
+                <% var j = 1; %>
+                <% for(var i = 0; i < body.length; i++) { %>
+                <% if(body[i].ward_id === head.ward_id) { %>
+                <tr>
+                  <th scope="row">
+                    <h6><%- head.ward_id %></h6>
+                  </th>
+                  <td>
+                    <h6><%- j++ %></h6>
+                  </td>
+                  <td>
+                    <h6><%- body[i].p_id %></h6>
+                  </td>
+                  <td>
+                    <h6><%- body[i].pname %></h6>
+                  </td>
+                  <td>
+                    <h6><%- body[i].votes %> / <%- head.voters %></h6>
+                  </td>
+                </tr>
+                <% } %>
+                <% } %>
+                <tr style="background-color: #b8daff;">
+                  <th scope="row"></th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </div>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </div>
-  
-  
 
-  <%- include("../a-partials/a-footer") -%> 
+
+
+  <%- include("../a-partials/a-footer") -%>

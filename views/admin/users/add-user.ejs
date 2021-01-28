@@ -1,184 +1,196 @@
 <%- include("../a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+
+</head>
+
+<body>
 
 
-<div class="row">
-  <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
-    <div class="sticky-top">
-      <h2>Election Management System</h2>
-      <div>
-        <a href="/admin">
-          <h5>Dashboard</h5>
-        </a>
-        <a href="/admin/users">
-          <h5 class="active">Users</h5>
-        </a>
-        <a href="/admin/party">
-          <h5>Party</h5>
-        </a>
-        <a href="/admin/wards">
-          <h5>Wards</h5>
-        </a>
-        <a href="">
-          <h5>Result</h5>
-        </a>
-        <a href="/login">
-          <h5>Logout</h5>
-        </a>
+  <div class="row">
+    <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
+      <div class="sticky-top">
+        <h2>Election Management System</h2>
+        <div>
+          <a href="/admin">
+            <h5>Dashboard</h5>
+          </a>
+          <a href="/admin/users">
+            <h5 class="active">Voters</h5>
+          </a>
+          <a href="/admin/moderator">
+            <h5>Moderators</h5>
+          </a>
+          <a href="/admin/party">
+            <h5>Party</h5>
+          </a>
+          <a href="/admin/wards">
+            <h5>Wards</h5>
+          </a>
+          <a href="/admin/result">
+            <h5>Result</h5>
+          </a>
+          <a href="/admin/vote-log">
+            <h5 >Vote Log</h5>
+          </a>
+          <form action="/logout/admin" method="POST">
+            <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+          </form>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="col-lg-10 col-md-9 bar content">
+      <% if(message !== "") { %>
+      <div class="message">
+        <p><%- message.value %>
+      </div>
+      <% } %>
+      <div class="view-user-outline">
+        <h2 style="color:#007bff">Voter Registration Form</h2>
+        <div>
+
+          <form name="addUser" enctype="multipart/form-data" <% if(voter === "") { %> action="/admin/add-user"
+            <% } else { %> action="/admin/update-user-D" <% } %> method="POST" onsubmit="return validateForm()">
+
+            <div class="form-div">
+              <div class="form-object">
+                <select name="ward" id="" class="input-box">
+                  <option value="" disabled selected hidden>Ward Id</option>
+                  <% wards.forEach(function(ward) { %>
+                  <option value="<%- ward.ward_id %>" <% if(voter != "") { %> <% if(voter.ward_id === ward.ward_id) { %>
+                    selected <% } %> <% } %>><%- ward.ward_id %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-object">
+                <% if(voter === "") { %>
+                <input type="number" name="id" placeholder="Voter Id" class="input-box">
+                <% } else { %>
+                <input type="hidden" name="id" value="<%- voter.voter_id %>" class="input-box">
+                <p>Voter Id: <%- voter.voter_id %> </p style="font-size: x-large;">
+                <% } %>
+              </div>
+            </div>
+
+            <div class="form-div">
+              <div class="form-object">
+                <input type="text" name="fname" placeholder="First Name" class="input-box" <% if(voter != "") { %>
+                  value="<%- voter.fname %>" <% } %>>
+              </div>
+              <div class="form-object">
+                <input type="text" name="lname" placeholder="Last Name" class="input-box" <% if(voter != "") { %>
+                  value="<%- voter.lname %>" <% } %>>
+              </div>
+            </div>
+
+
+            <div class="form-div">
+              <div class="form-object">
+                <input type="number" class="input-box" name="age" placeholder="Age" <% if(voter != "") { %>
+                  value="<%- voter.age %>" <% } %>>
+              </div>
+              <div class="form-object">
+                <select name="gender" class="input-box">
+                  <option value="" disabled selected hidden>Gender</option>
+                  <option value="male" <% if(voter != "") { %> <% if(voter.gender === "male") { %> selected <% } %>
+                    <% } %>>Male</option>
+                  <option value="female" <% if(voter != "") { %> <% if(voter.gender === "female") { %> selected <% } %>
+                    <% } %>>Female</option>
+                  <option value="others" <% if(voter != "") { %> <% if(voter.gender === "others") { %> selected <% } %>
+                    <% } %>>Others</option>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="form-div">
+              <div class="form-object">
+                <div class="preview" ">
+                  <img id="file_preview" 
+                    <% if (image !== "") { %>style="width: 200px; height: 200px; box-shadow: 0 0 6px gray;" src="http://localhost:3000/uploads/<%= image %>" <% } %>>
+                </div>
+              </div>
+              <div class="form-object">
+                <div class="form-object-item">
+                  <input type="file" name="image" value="Profile" id="upload_img" accept="image/*"
+                    onchange="showPreview(event);" style="padding-left: 15px;">
+                </div>
+                <div class="form-object-item">
+                  <input type="text" name="address" placeholder="Address" class="input-box" <% if(voter != "") { %>
+                    value="<%- voter.address %>" <% } %>>
+                </div>
+                <div class="form-object-item">
+                  <input type="number" name="phno" placeholder="Phone Number" class="input-box" <% if(voter != "") { %>
+                    value="<%- voter.phone %>" <% } %>>
+                </div>
+                <div class="form-object-item">
+                  <input type="submit" class="btn btn-success btn-lg" <% if(voter != "") { %> value="Update"
+                    <% } else { %> value="Add Voter" <% } %>>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-    
-
   </div>
-  <div class="col-lg-10 col-md-9 bar content">
-    <% if(message !== "") { %>
-      <p><%- message.value %> </p>
-    <% } %>
-    <div>
-      <div class="preview">
-        <img id="file_preview"
-        <% if (image !== "") { %>
-           src="http://localhost:3000/uploads/<%= image %>"
-        <% } %>
-        >
-			</div>
-      <form name="addUser" enctype="multipart/form-data" 
-      <% if(voter === "") { %> 
-        action="/admin/add-user"
-      <% } else { %>
-        action="/admin/update-user-D"
-      <% } %>
-       method="POST"  onsubmit="return validateForm()">
-        <label for="">Ward number :</label>
-        <select name="ward" id="">
-          <% wards.forEach(function(ward) { %>
-          <option value="<%- ward.ward_id %>"
-            <% if(voter != "") { %> 
-              <% if(voter.ward_id === ward.ward_id) { %>
-              selected
-              <% } %>
-            <% } %>   
-          ><%- ward.ward_id %></option> 
-          <% }) %> 
-        </select><br>
-        <% if(voter === "") { %> 
-          <label for="">Voter id :</label>
-          <input type="number" name="id"><br>
-        <% } else { %>
-          <input type="hidden" name="id" value="<%- voter.voter_id %>"> 
-          <h6>Voter Id: <%- voter.voter_id %> </h6>
-        <% } %> 
-        
-        <label for="">First name :</label>
-        <input type="text" name="fname" 
-        <% if(voter != "") { %> 
-          value="<%- voter.fname %>"
-        <% } %> 
-        ><br>
-        <label for="">Last name :</label>
-        <input type="text" name="lname"
-        <% if(voter != "") { %> 
-          value="<%- voter.lname %>"
-        <% } %> 
-        ><br>
-        <label for="upload_img">Upload image</label>
-				<input type="file" name="image" id="upload_img" accept="image/*" onchange="showPreview(event);">
-        <br><label>age</label>
-        <input type="number" name="age"
-        <% if(voter != "") { %> 
-          value="<%- voter.age %>"
-        <% } %> 
-        ><br>
-        <label for="">gender :</label>
-        <select name="gender">
-          <option value="male"
-          <% if(voter != "") { %> 
-            <% if(voter.gender === "male") { %>
-            selected
-            <% } %>
-          <% } %> 
-          >Male</option>
-          <option value="female"
-          <% if(voter != "") { %> 
-            <% if(voter.gender === "female") { %>
-            selected
-            <% } %>
-          <% } %> 
-          >Female</option>
-          <option value="others"
-          <% if(voter != "") { %> 
-            <% if(voter.gender === "others") { %>
-            selected
-            <% } %>
-          <% } %> 
-          >Others</option>
-        </select><br>
-        <label for="">Address :</label>
-        <input type="text" name="address"
-        <% if(voter != "") { %> 
-          value="<%- voter.address %>"
-        <% } %> 
-        ><br>
-        <label>Phone no :</label>
-        <input type="number" name="phno"
-        <% if(voter != "") { %> 
-          value="<%- voter.phone %>"
-        <% } %> 
-        ><br>
-        <input type="submit" 
-        <% if(voter != "") { %> 
-          value="Update"
-        <% } else { %>
-          value="Add Voter"
-        <% } %>  
-        >
-
-      </form>
-    </div>
-    
-    
-    
-  </div>
-</div>
 
 
-<script>
-  function validateForm() {
-    var id = document.forms["addUser"]["id"].value;
-    var phone = document.forms["addUser"]["phno"].value.toString();
-    var fname = document.forms["addUser"]["fname"].value;
-    var lname = document.forms["addUser"]["lname"].value;
-    var age = document.forms["addUser"]["age"].value;
-    if(!id) {
-      alert ("Enter your id.....");
-      return false;
+  <script>
+    function validateForm() {
+      var gender = document.forms["addUser"]["gender"].value;
+      var ward = document.forms["addUser"]["ward"].value;
+      var id = document.forms["addUser"]["id"].value;
+      var phone = document.forms["addUser"]["phno"].value.toString();
+      var fname = document.forms["addUser"]["fname"].value;
+      var lname = document.forms["addUser"]["lname"].value;
+      var age = document.forms["addUser"]["age"].value;
+      var image = document.forms["addUser"]["image"].value;
+      if (!ward) {
+        alert("Enter your Ward.....");
+        return false;
+      } else if (!id) {
+        alert("Enter your id.....");
+        return false;
+      } else if (!image) {
+        if (voter == "") {
+          alert("please select a profile image");
+          return false;
+        }
+      } else if (isNullOrBlank(fname) || isNullOrBlank(lname)) {
+        alert("Please enter your name");
+        return false;
+      } else if (age < 18) {
+        alert("Your age is less than 18, You are eligible to vote");
+        return false;
+      } else if (!gender) {
+        alert("Enter your Gender");
+        return false;
+      } else if (phone.length !== 10) {
+        alert("please enter your correct phone number");
+        return false;
+      } else {
+        return true;
+      }
     }
-    else if(isNullOrBlank(fname) || isNullOrBlank(lname)) {
-      alert ("Please enter your name");
-      return false;
+
+    function isNullOrBlank(str) {
+      return (!str || str.length === 0 || !str.trim())
     }
-    else if( age < 18) {
-      alert ("Your age is less than 18, You are eligible to vote");
-      return false;
+
+    function showPreview(event) {
+      if (event.target.files.length > 0) {
+        var src = URL.createObjectURL(event.target.files[0]);
+        var preview = document.getElementById("file_preview");
+        preview.src = src;
+        preview.style.display = "block";
+        preview.style.width = "200px";
+        preview.style.height = "200px";
+        preview.style.boxShadow = "0 0 10px grey";
+      }  
     }
-    else if( phone.length !== 10) {
-      alert("please enter your correct phone number");
-      return false;
-    } else {
-      return true;
-    }
-  }
-  function isNullOrBlank(str) {
-    return (!str || str.length === 0 || !str.trim())
-  }
-  function showPreview(event) {
-		if(event.target.files.length > 0) {
-			var src = URL.createObjectURL(event.target.files[0]);
-			var preview = document.getElementById("file_preview");
-			preview.src = src;
-			preview.style.display ="block";
-		}
-	}
-</script>
+  </script>
 
 
-<%- include("../a-partials/a-footer") -%>
+  <%- include("../a-partials/a-footer") -%>

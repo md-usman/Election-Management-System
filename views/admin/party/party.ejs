@@ -1,6 +1,11 @@
 <%- include("../a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
 
-<div class="row">
+</head>
+
+<body>
+
+  <div class="row">
     <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
       <div class="sticky-top">
         <h2>Election Management System</h2>
@@ -9,7 +14,7 @@
             <h5>Dashboard</h5>
           </a>
           <a href="/admin/users">
-            <h5>Users</h5>
+            <h5>Voters</h5>
           </a>
           <a href="/admin/moderator">
             <h5>Moderators</h5>
@@ -23,52 +28,63 @@
           <a href="/admin/result">
             <h5>Result</h5>
           </a>
-          <a href="/login">
-            <h5>Logout</h5>
+          <a href="/admin/vote-log">
+            <h5>Vote Log</h5>
           </a>
+          <form action="/logout/admin" method="POST">
+            <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+          </form>
         </div>
       </div>
-      
-  
+
+
     </div>
     <div class="col-lg-10 col-md-9 bar content">
       <% if(message !== "") { %>
-        <h4 style="color: black;"><%- message.value %></h4>
-      <% } %> 
-    
-    
-    <h3>Add Party</h3>
-    <a class="btn btn-success" href="/admin/add-party">Add Party</a>
-    <table class="table" style="text-align: center;">
-      <thead>
-        <tr class="table-primary">
-          <th scope="col">Party Id</th>
-          <th scope="col">Symbol</th>
-          <th scope="col">Name</th>
-          <th scope="col">Leader Id</th>
-          <th scope="col">Ward</th>
-          <th scope="col">Delete Party</th>            
-        </tr>
-      </thead>
-      <tbody>
-        <% parties.forEach(function (party) { %> 
-        <tr>
-          <th scope="row"><%- party.p_id %> </th>
-          <td><img src="http://localhost:3000/uploads/<%- JSON.stringify(party.logo).replace(/['"]+/g, '') %>" alt="logo" style="width:40px; height: 40px"></td>
-          <td><%- party.pname %></td>
-          <td><%- party.leader %></td>
-          <td><%- party.ward_id %></td>
-          <td><form action="/admin/party/add-del" method="POST">
-            <input type="hidden" name="meth" value="delete">
-            <input type="hidden" name="p_id" value="<%- party.p_id %>">
-            <input type="submit" class="btn btn-outline-danger" value="Delete Party">      
-          </form></td>
-        </tr>
-      <% }) %> 
-      </tbody>
-    </table>
+      <div class="message">
+        <p><%- message.value %>
+      </div>
+      <% } %>
+
+      <h2 style="color:#007bff">Parties</h2>
+      <div class="table-outline">
+        <a class="btn btn-success button" href="/admin/add-party">Add Party</a>
+        <table class="table table-border" style="text-align: center;">
+          <thead>
+            <tr class="table-primary">
+              <th scope="col">Party Id</th>
+              <th scope="col">Symbol</th>
+              <th scope="col">Name</th>
+              <th scope="col">Leader Id</th>
+              <th scope="col">Ward</th>
+              <th scope="col">Delete Party</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% parties.forEach(function (party) { %>
+            <tr>
+              <th style="vertical-align:middle;" scope="row"><%- party.p_id %> </th>
+              <td style="vertical-align:middle;"><img
+                  src="http://localhost:3000/uploads/<%- JSON.stringify(party.logo).replace(/['"]+/g, '') %>" alt="logo"
+                  style="width:40px; height: 40px; margin: 0; border-radius:25%"></td>
+              <td style="vertical-align:middle;"><%- party.pname %></td>
+              <td style="vertical-align:middle;"><%- party.leader %></td>
+              <td style="vertical-align:middle;"><%- party.ward_id %></td>
+              <td style="vertical-align:middle;">
+                <form action="/admin/party/add-del" method="POST">
+                  <input type="hidden" name="meth" value="delete">
+                  <input type="hidden" name="p_id" value="<%- party.p_id %>">
+                  <input type="submit" class="btn btn-outline-danger" value="Delete Party">
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </div>
-  
 
-<%- include("../a-partials/a-footer") -%>
+
+  <%- include("../a-partials/a-footer") -%>

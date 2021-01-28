@@ -1,27 +1,127 @@
-<%- include("../partials/header") -%>
+<!DOCTYPE html>
+<html>
 
+<head>
+  <meta charset="utf-8">
+  <title>Election Management System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" type="text/css" href="/css/login.css">
+  <link rel="stylesheet" href="/css/admin/viewUser.css">
+</head>
 
-<h4><%- voter.voter_id %></h4>
-<h4><%- voter.fname %> <%- voter.lname %></h4><br>
+<body>
+  <div class="navbar navbar-dark bg-dark">   
+    <p class="navbar-brand top-nav ">Election Management System</p>
+    <ul class="nav justify-content-end">
+      <li class="nav-item">
+        <form action="/voter/logout" method="POST">
+          <input type="submit" value="LOGOUT" class="nav-link btn btn-primary" id="">
+        </form>
+      </li>
+    </ul>
+  </div>
 
-<% if(voted.vote) { %>
-  <p>You have already voted</p>
-<% } %> 
-
-    <div id="selectedParty">
-      <form action="/vote/<%- voter.voter_id %>" name="partyVote" method="POST">
-        <% parties.forEach(function(party) { %>
-        <input type="radio" name="pname" value="<%- party.p_id %>">
-        <label><%- party.p_id %>: <%- party.pname %></label><br>
-        <% }) %>
-      <input type="submit">
-      </form>
-    </div><br>
+  <div class="voting-page" style=" text-align: center;">
+    <table style="width: 90%; text-align: center; margin-top: 5em;">
+      <tr>
+        <th>
+          <div class="voter-detail" style="text-align: center; margin: auto">
+            <h2 style="color: #007fff; margin-bottom: 0;">Profile</h2>
+            <img src="http://localhost:3000/uploads/<%- JSON.stringify(voter.image).replace(/['"]+/g, '') %>" alt="logo"
+              style="width:200px; height: 200px; margin: 0; border-radius:15%; box-shadow: 0 0 10px gray;">
+              <div style="text-align: center; margin-top: 1em;">
+                <table class="table" style=" margin: auto; text-align: center;" >
+                  <tr>
+                    <th>
+                      <h5 style="text-align: end;">Voter Id :</h5>
+                    </th>
+                    <th>
+                      <h5 style="text-align: left; "><%- voter.voter_id %></h5>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <h5 style="text-align: end;">Name :</h5>
+                    </th>
+                    <th>
+                      <h5 style="text-align: left;"><%- voter.fname %> <%- voter.lname %></h5>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <h5 style="text-align: end;">Ward no :</h5>
+                    </th>
+                    <th>
+                      <h5 style="text-align: left;"><%- voter.ward_id %></h5>
+                    </th>
+                  </tr>
+                </table>
+              </div>
+          </div>
+        </th>
+        <th style="width: 60%; margin-right: 4em;">
+          <div class="vote-party">
+            <div class="table-outline" style="text-align: center ;">
+              <% if(voted.vote) { %>
+                <h2 class="vote-message" style="color: black; background-color: rgb(245, 202, 202);">Your Vote has been recorded</h2>
+              <% }  else { %>
+                <h2 class="vote-message" style="color: black; background-color: rgb(204, 247, 210);">Please Vote for Your Party</h2>
+              <% } %>
+              <table class="table  table-border" style="text-align: center;">
+                <thead>
+                  <tr class="table-primary">
+                    <th scope="col">Party Id</th>
+                    <th scope="col">Logo</th>
+                    <th scope="col">Party Name</th>
+                    <th scope="col">Vote</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% parties.forEach(function(party) { %>
+                  <tr>
+                    <th scope="row" style="vertical-align:middle"><%- party.p_id %></th>
+                    <td style="vertical-align:middle"><img
+                        src="http://localhost:3000/uploads/<%- JSON.stringify(party.logo).replace(/['"]+/g, '') %>" alt="logo"
+                        style="width:40px; height: 40px; margin: 0; border-radius:25%"></td>
+                    </td>
+                    <td style="vertical-align:middle"><%- party.pname %></td>
+                    <td style="vertical-align:middle">
+                      <% if(!voted.vote) { %>
+                      <form action="/vote/:voter_id" method="POST">
+                        <input type="hidden" name="party_id" id="" value="<%- party.p_id %>">
+                        <input type="hidden" name="voter_id" value="<%- voter.voter_id %>">
+                        <input type="submit" class="btn btn-success <% if(voted.vote) { %> voted <% } %>"value="<% if(voted.vote) { %>VOTED<% } else { %>VOTE<% }%>">
+                      </form> 
+                      <% } else { %> 
+                        <p style="vertical-align:middle"> --- </p>
+                      <% } %>  
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </th>
+      </tr>
+    </table>
     
+    
+  </div>
 
+  <script>
+      var elems = document.getElementsByClassName("voted");
+      for(var i = 0; i < elems.length; i++) {
+          elems[i].disabled = true;
+      }
+    
+  </script>
 
-<script>
-    document.get
-</script>
-
-<%- include("../partials/footer") -%>
+  <%- include("../partials/footer") -%>

@@ -1,4 +1,10 @@
-<%- include("a-partials/a-header") -%> 
+<%- include("a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+
+</head>
+
+<body>
+
 
 
   <div class="row">
@@ -6,12 +12,12 @@
       <div class="sticky-top">
 
         <h2>Election Management System</h2>
-        <div >
+        <div>
           <a href="/admin">
             <h5 class="active">Dashboard</h5>
           </a>
           <a href="/admin/users">
-            <h5>Users</h5>
+            <h5>Voters</h5>
           </a>
           <a href="/admin/moderator">
             <h5>Moderators</h5>
@@ -25,47 +31,60 @@
           <a href="/admin/result">
             <h5>Result</h5>
           </a>
-          <a href="">
-            <h5>Logout</h5>
+          <a href="/admin/vote-log">
+            <h5 >Vote Log</h5>
           </a>
+          <form action="/logout/admin" method="POST">
+            <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+          </form>
         </div>
       </div>
-      
-      
+
+
     </div>
     <div class="col-lg-10 col-md-9 bar content">
-      <h3>Welcome Back</h3>
-      <h4>Lokshaba Elelction</h4>
-      <table>
-        <tr>
-          <td> Total voters</td>
-          <td> : <%- stats.total %> </td>
-        </tr>
-        <tr>
-          <td> Total voted </td>
-          <td> : <%- stats.votes %> </td>
-        </tr>
-        <tr>
-          <td>Total parties </td>
-          <td> : <%- stats.party %> </td>
-        </tr>
-        <tr>
-          <td>Total wards </td>
-          <td> : <%- stats.wards %> </td>
-        </tr>
-        <% gender.forEach(function(gender) { %>
-         <tr>
-           <td><%- gender.gender %> </td>
-           <td> : <%- gender.total %> </td>
-         </tr>
-        <% }) %>
-
-        
-        
-      </table>
-     </div>
+      <h2 style="color:#007bff">Election Management Portal</h2>
+      <div class="table-outline">
+        <div class="dash-line">
+          <div class="dash-object">
+            TOTAL VOTERS<br>
+            <div class="number"><%- stats.total %></div>
+          </div>
+          <div class="dash-object">
+            TOTAL WARDS<br>
+            <div class="number"><%- stats.wards %></div>
+          </div>
+          <div class="dash-object">
+            TOTAL PARTIES<br>
+            <div class="number"><%- stats.party %></div>
+          </div>
+        </div>
+        <div class="dash-line">
+          <div class="dash-object">
+            TOTAL VOTERS<br>
+            <div class="number"><%- stats.total %></div>
+          </div>
+          <div class="dash-object">
+            TOTAL VOTED<br>
+            <div class="number"><%- stats.votes %></div>
+          </div>
+          <div class="dash-object">
+            PENDING VOTES<br>
+            <div class="number"><%- stats.total - stats.votes %></div>
+          </div>
+        </div>
+        <div class="dash-line">
+          <% gender.forEach(function(gender) { %>
+          <div class="dash-object">
+            <%- gender.gender.toUpperCase() %><br>
+            <div class="number"><%- gender.total %></div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
   </div>
-  
-  
 
-  <%- include("a-partials/a-footer") -%> 
+
+
+  <%- include("a-partials/a-footer") -%>

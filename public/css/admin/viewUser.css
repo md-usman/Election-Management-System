@@ -1,0 +1,132 @@
+.message {
+    background-color: #b8daff;
+    text-align: center;
+    align-items: center;
+    margin: auto;
+    margin-top: 10px;
+    font-size: 1.4em;
+    width: 35%;
+    border-radius: 0.7rem;
+
+}
+
+.button {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+.table-outline {
+    margin: 15px 30px 25px;
+}
+
+.table-border {
+    box-shadow: 0 0 3px gray;
+}
+
+#addmod {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.middle-row {
+    vertical-align: middle;
+}
+
+.dash-object {
+    text-align: center;
+    display: inline-block;
+    padding: 1em 2em 1em;
+    width: 25%;
+    background-color: #d9e6f5;
+    border-radius: 0.5em;
+    margin: 0 20px;
+    box-shadow: 0 0 5px gray;
+}
+
+.dash-line {
+    font-size: x-large;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight: bold;
+    color: #053c77;
+    text-align: center;
+    margin-bottom: 3em;
+    margin-top: 2em;
+}
+
+.number {
+    color: rgb(96, 119, 252);
+    font-size: xx-large;
+}
+
+
+.view-user-outline {
+    background-color: #d1e7ff;
+    font-size: x-large;
+    text-align: center;
+    border-radius: 1em;
+    width: 36em;
+    margin: auto;
+    margin-top: 2em;
+    box-shadow: 0 0 6px gray;
+}
+
+.form-object {
+    display: inline-block;
+    width: 35%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.form-object-item {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.input-box {
+    width: 11em;
+    height: 1.8em;
+    border-radius: 6px;
+    text-align: center;
+    background-color: white;
+}
+
+.display-box {
+    background-color: rgb(247, 247, 247);
+    border-radius: 5px;
+    font-size: large;
+}
+
+.voter-detail {
+    padding-top: 1em;
+    box-shadow: 0 0 6px gray;
+    width: 80%;
+    border-radius: 10px;
+
+}
+
+
+.display-info {
+    padding: 10px;
+    margin: 10px;
+}
+
+.vote-message {
+    
+    text-align: center;
+    margin-bottom: 1em; 
+    padding: 0.5em; 
+    border-radius: 10px;
+    color: black; 
+    
+}
+
+h2 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: white;
+    text-align: center;
+    padding-top: 1em;
+    padding-bottom: 2em;
+}

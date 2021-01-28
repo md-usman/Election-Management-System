@@ -1,20 +1,24 @@
 <%- include("partials/header") -%>
+ 
 <div class="login text-center">
-    <form class="form-signin">
+    <form class="form-signin" action="/login" method="POST">
+        <% if(message !== "") { %>
+            <div class="messageL" ><p><%- message.value %></div>
+          <% } %>
         <h3 class="login-heading mb-4">Login</h3>
         <div class="form-label-group login-text">
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+            <input type="number" name="voter_id" class="form-control" placeholder="Voter Id" autocomplete="off" required autofocus>
 
         </div>
 
         <div class="form-label-group login-text">
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            <input type="password" id="inputPassword" name="password" class="form-control" autocomplete="off" placeholder="Password" required>
 
         </div>
 
 
-        <button class=" login-btn btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-            type="submit">Sign in</button>
+        <input class=" login-btn btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+            type="submit" value="Sign in">
 
     </form>
 

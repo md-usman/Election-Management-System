@@ -1,4 +1,8 @@
 <%- include("../a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+
+</head>
+<body>
 
 
 <div class="row">
@@ -10,7 +14,7 @@
         <h5>Dashboard</h5>
       </a>
       <a href="/admin/users">
-        <h5>Users</h5>
+        <h5>Voters</h5>
       </a>
       <a href="/admin/moderator">
         <h5>Moderators</h5>
@@ -24,9 +28,12 @@
       <a href="/admin/result">
         <h5>Result</h5>
       </a>
-      <a href="/login">
-        <h5>Logout</h5>
+      <a href="/admin/vote-log">
+        <h5 >Vote Log</h5>
       </a>
+      <form action="/logout/admin" method="POST">
+        <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+      </form>
     </div>
     </div>
     
@@ -35,30 +42,50 @@
   <div class="col-lg-10 col-md-9 bar content">
     <div>
       <% if(message !== "") { %>
-        <h6><%- message.value %></h6>
+        <div class="message"><p><%- message.value %></div>
       <% } %>
-      <form name="addParty" action="/admin/party/add-del" enctype="multipart/form-data" method="POST" onsubmit="return validateForm()">
-        <label for="">Ward Id :</label>
-        <select name="ward" >
-          <% wards.forEach(function(ward) { %>
-            <option value="<%- ward.ward_id %>"><%- ward.ward_id %></option> 
-          <% }) %> 
-        </select><br>
-        <label for="">Party id :</label>
-        <input type="number" name="pid"><br>
-        <label for="">Party Name :</label>
-        <input type="text" name="pname"><br>
-        <label for="">Leader Id: </label>
-        <input type="hidden" name="meth" value="add">
-        <input type="number" name="leader" ><br>
-        <label for="upload_img">Upload logo</label>
-				<input type="file" name="logo" id="upload_img" accept="image/*" onchange="showPreview(event);">
-        <input type="submit" value="ADD PARTY">
-
-      </form>
-      <div class="preview">
-				<img id="file_preview">
-			</div>
+      <div class="view-user-outline">
+        <h2 style="color:#007bff"> Party Registration</h2>
+        <form name="addParty" action="/admin/party/add-del" enctype="multipart/form-data" method="POST" onsubmit="return validateForm()">
+        <div class="form-div">
+          <div class="form-object">
+            <select name="ward" class="input-box">
+              <option value="" disabled selected hidden>Ward Id</option>
+              <% wards.forEach(function(ward) { %>
+                <option value="<%- ward.ward_id %>"><%- ward.ward_id %></option> 
+              <% }) %> 
+            </select><br>
+          </div>
+          <div class="form-object">
+            <input class="input-box" type="number" name="pid" placeholder="Party Id">
+          </div>
+        </div>
+        <div class="form-div">
+          <div class="form-object">
+            <input class="input-box" type="text" name="pname" placeholder="Party Name">
+          </div>
+          <div class="form-object">
+            <input class="input-box" type="number" name="leader" placeholder="Leader Id">
+          </div>
+        </div>  
+          <div class="form-div">
+          <div class="form-object">
+            <div class="preview">
+              <img id="file_preview">
+            </div>
+          </div>
+          <div class="form-object">
+            <div class="form-object-item">
+              <input type="file" name="logo" id="upload_img" accept="image/*" onchange="showPreview(event);">
+            </div>
+            <div class="form-object-item">
+              <input type="submit" class="btn btn-success" value="ADD PARTY">
+            </div>
+          </div>
+        </div> 
+          <input class="input-box" type="hidden" name="meth" value="add">
+        </form>
+      </div>
     </div>
     
     

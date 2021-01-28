@@ -1,0 +1,74 @@
+<%- include("../a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
+
+</head>
+
+<body>
+
+
+
+  <div class="row">
+    <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
+      <div class="sticky-top">
+
+        <h2>Election Management System</h2>
+        <div>
+          <a href="/admin">
+            <h5>Dashboard</h5>
+          </a>
+          <a href="/admin/users">
+            <h5>Voters</h5>
+          </a>
+          <a href="/admin/moderator">
+            <h5>Moderators</h5>
+          </a>
+          <a href="/admin/party">
+            <h5>Party</h5>
+          </a>
+          <a href="/admin/wards">
+            <h5>Wards</h5>
+          </a>
+          <a href="/admin/result">
+            <h5>Result</h5>
+          </a>
+          <a href="/admin/vote-log">
+            <h5 class="active">Vote Log</h5>
+          </a>
+          <form action="/logout/admin" method="POST">
+            <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+          </form>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="col-lg-10 col-md-9 bar content">
+      <h2 style="color:#007bff">Election Log</h2>
+      <div class="table-outline" style=" width: 70%; margin: auto;">
+        <div class="table-border">
+          <table class="table" style="text-align: center;">
+            <thead>
+              <tr class="table-primary">
+                <th scope="col">Voter Id</th>
+                <th scope="col">Party Id</th>
+                <th scope="col">Vote Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% logs.forEach(function (log) { %>
+              <tr>
+                <th scope="row"><%- log.voter_id %> </th>
+                <td><%- log.party_id %> </td>
+                <td><%- log.voted_date %> </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <%- include("../a-partials/a-footer") -%>

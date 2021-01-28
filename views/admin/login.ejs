@@ -1,21 +1,25 @@
 <%- include("../partials/header") -%>
+<div class="login text-center">
+    <form class="form-signin" action="/admin/login" method="POST">
+        <% if(message !== "") { %>
+            <div class="messageL" ><p><%- message.value %></div>
+          <% } %>
+          <h3 class="login-heading mb-4">Admin Login</h3>
+          <div class="form-label-group login-text">   
+            <input type="text" name="admin_id" class="form-control" autocomplete="off" placeholder="User name" required autofocus>
+          </div>
+  
+          <div class="form-label-group login-text">
+              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+  
+          </div>
 
-<form class="form-signin">
-    <h3 class="login-heading mb-4">Admin login</h3>
-    <div class="form-label-group login-text">
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 
-    </div>
+        <input class=" login-btn btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+            type="submit" value="Sign in">
 
-    <div class="form-label-group login-text">
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    </form>
 
-    </div>
-
-
-    <button class=" login-btn btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-        type="submit">Sign in</button>
-
-</form>
+</div>
 
 <%- include("../partials/footer") -%>

@@ -1,5 +1,8 @@
 <%- include("../a-partials/a-header") -%>
+<link rel="stylesheet" href="/css/admin/viewUser.css">
 
+</head>
+<body>
 
 <div class="row">
   <div class="col-lg-2  col-md-3 sidebar" id="sticky-sidebar">
@@ -10,7 +13,7 @@
         <h5>Dashboard</h5>
       </a>
       <a href="/admin/users">
-        <h5 class="active">Users</h5>
+        <h5 class="active">Voters</h5>
       </a>
       <a href="/admin/moderator">
         <h5>Moderators</h5>
@@ -24,40 +27,49 @@
       <a href="/admin/result">
         <h5>Result</h5>
       </a>
-      <a href="/login">
-        <h5>Logout</h5>
+      <a href="/admin/vote-log">
+        <h5 >Vote Log</h5>
       </a>
+      <form action="/logout/admin" method="POST">
+        <input type="submit" value="Logout" class="btn btn-lg btn-primary" name="" id="">
+      </form>
     </div>
     </div>
   </div>
                                    
   <div class="col-lg-10 col-md-9 content" id="main">
     <% if(message !== "") { %>
-      <p><%- message.value %><br>
-    <% } %> 
-    <a href="/admin/add-user" class="btn btn-success">ADD VOTER</a>
-    <table class="table" style="text-align: center;">
-      <thead>
-        <tr class="table-primary">
-          <th scope="col">Voter id</th>
-          <th scope="col">Name</th>
-          <th scope="col">Age</th>
-          <th scope="col">Ward id</th>
-          <th scope="col">View user</th>            
-        </tr>
-      </thead>
-      <tbody>
-        <% voters.forEach(function (voter) { %> 
-        <tr>
-          <th scope="row"><%- voter.voter_id %> </th>
-          <td><%- voter.fname %> <%- voter.lname %> </td>
-          <td><%- voter.age %> </td>
-          <td><%- voter.ward_id %> </td>
-          <td><a href="/admin/users/<%- voter.voter_id %>" style="color:blueviolet">view user</a></td>
-        </tr>
-      <% }) %> 
-      </tbody>
-    </table>
+      <div class="message"><p><%- message.value %></div>
+    <% } %>
+    <h2 style="color:#007bff">Voters</h2>
+    <div class="table-outline">
+      <a href="/admin/add-user" class="btn btn-success button">ADD VOTER</a>
+      <div class="table-border">
+        <table class="table" style="text-align: center;">
+          <thead>
+            <tr class="table-primary">
+              <th scope="col">Voter id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Age</th>
+              <th scope="col">Ward id</th>
+              <th scope="col">View user</th>            
+            </tr>
+          </thead>
+          <tbody>
+            <% voters.forEach(function (voter) { %> 
+            <tr>
+              <th scope="row"><%- voter.voter_id %> </th>
+              <td ><%- voter.fname %> <%- voter.lname %> </td>
+              <td ><%- voter.age %> </td>
+              <td ><%- voter.ward_id %> </td>
+              <td><a href="/admin/users/<%- voter.voter_id %>" style="color:blueviolet">view user</a></td>
+            </tr>
+          <% }) %> 
+          </tbody>
+        </table>
+      </div> 
+    </div> 
+    
   </div>
 </div>
 

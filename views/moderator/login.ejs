@@ -1,21 +1,27 @@
 <%- include("../partials/header") -%>
 
-<form class="form-signin">
-    <h3 class="login-heading mb-4">Moderator login</h3>
-    <div class="form-label-group login-text">
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+<div class="login text-center">
+    <form class="form-signin" action="/moderator/login" method="POST">
+        <% if(message !== "") { %>
+            <div class="messageL" ><p><%- message.value %></div>
+          <% } %>
+        <h3 class="login-heading mb-4">Moderator Login</h3>
+        <div class="form-label-group login-text">
+            <input type="number" class="form-control" name="m_id" placeholder="Moderator Id" autocomplete="off" required autofocus>
 
-    </div>
+        </div>
 
-    <div class="form-label-group login-text">
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <div class="form-label-group login-text">
+            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
 
-    </div>
+        </div>
 
 
-    <button class=" login-btn btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-        type="submit">Sign in</button>
+        <input class=" login-btn btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+            type="submit" value="Sign in">
 
-</form>
+    </form>
+
+</div>
 
 <%- include("../partials/footer") -%>
