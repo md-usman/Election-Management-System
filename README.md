@@ -29,12 +29,6 @@ The project is an Online Voting System where people can vote for their represent
   <img src="https://github.com/md-usman/Election-Management-System/blob/master/screenshots/voting.png" width="800" height="450">
 </div>
 
-##### Voting Portal
-
-<div align="center">
-  <img src="https://github.com/md-usman/Election-Management-System/blob/master/screenshots/voting.png" width="800" height="450">
-</div>
-
 ##### Voter Details
 
 <div align="center">
